@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class Vector
 {
   private int[] array;
@@ -5,7 +7,28 @@ public class Vector
 
   public static void main()
   {
-    //Vector v = new Vector(10);
+    Scanner sc = new Scanner(System.in);
+
+    System.out.print("Pick the chosen capacity of the vector :");
+    int capacity = sc.nextInt();
+    Vector v = new Vector(capacity);
+
+    System.out.println("Enter the values(q to quit)");
+    for (int i=0 ; i<v.getCapacity() ; i++)
+    {
+      System.out.print("Enter the value for vector["+i+"] : ");
+      double value = sc.nextDouble();
+      if (value == 00)
+        return;
+      v.addElement(value);
+    }
+
+    System.out.println("Displaying of the vector :");
+    for (int i=0 ; i<v.getCapacity() ; i++)
+    {
+      System.out.println("vector ["+i+"] = "+v.getElement(i));
+    }
+
   }
 
   public Vector (int capacity)
@@ -28,7 +51,7 @@ public class Vector
   {
     return array.length();
   }
-
+²
   public boolean isEmpty() // Une methode qui verifie une variable est appellée un predicat
   {
     return size==0;
@@ -52,26 +75,23 @@ public class Vector
     // je sais pas quoi
   }
 
-  public ensureCapacity(int wantedCapacity)
+  public void ensureCapacity(int minCapacity)
   {
-    if(wantedCapacity < getCapacity())
-      return ;
-
-    int new Capacity = Math.max(2*getCapacity(), wantedCapacity);
-    int[] new Array = new int[new Capacity];
-    System.arraycopy(array, 0, new Array, 0, size);
-    array = new Array;
-  }
+    // int oldCapacity = ellang.NumberElments.length;
+    // if (oldCapacity >= minCapacity) return;
+    // int newCapacity = Math.max(oldCapacity * 2, minCapacity);
+    // elements = Arrays.copyOf(elements, newCapacity);
+}
 
   public int getElement( int index)
   {
     if(!indexIsValid)
-      return int.min();
+      return -999999999;
 
     return array[index];
   }
 
-  public addElement(int value)
+  public void addElement(int value)
   {
     ensureCapacity(size+1);
     array[size] = value;
