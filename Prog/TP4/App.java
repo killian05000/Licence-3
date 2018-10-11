@@ -11,10 +11,10 @@ public class App
   }
   public static void run()
   {
-    JFrame frame = new JFrame("demo");
-    Truck truck = new Truck();
-    frame.getContentPane().add(truck);
-    frame.pack();
-    frame.setVisible(true);
+    JFrame window = new JFrame("demo");
+    MyTruck truck = new MyTruck();
+    window.getContentPane().add(truck);
+    window.pack();
+    window.setVisible(true);
   }
 }

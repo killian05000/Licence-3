@@ -1,15 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.*;
 
-public class MyTruck extends Jpanel
+public class MyTruck extends JPanel
 {
   public MyTruck()
   {
     setPreferredSize(new Dimension(130, 110));
   }
 
-  private void paintTruck(MarseillaisPainter painter)
+  private void paintTruck(Painter painter)
   {
     painter.drawRectangle(10,10,70,70);
     painter.drawRectangle(80,45,40,35);
@@ -20,7 +19,8 @@ public class MyTruck extends Jpanel
   protected void paintComponent(Graphics g)
   {
     super.paintComponent(g);
-    MarseillaisPainter painter = new MarseillaisPainter(g);
+    //Painter painter = new PainterFromMarseille(g);
+    Painter painter = new EnglishPainterAdapter(g);
     paintTruck(painter);
   }
 }
