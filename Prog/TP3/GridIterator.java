@@ -6,9 +6,7 @@ public class GridIterator<T> implements Iterator<T>
   //private Grid<T> grid;
 
   public GridIterator ()
-
-
-    //formel grid;
+ {
     nextLine = null;
     nextColumn = null;
   }
