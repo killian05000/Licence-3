@@ -35,6 +35,117 @@ public class Graph<Label> {
         incidency.get(source).addLast(new Edge(source,dest,label));
     }
     
+    //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    
+    
+    public Graph<Label> transpose() {
+        Graph<Label> result = new Graph<>(cardinal);
+        for (LinkedList<Edge> out_v : incidency) {
+            for (Edge e : out_v) {
+                result.addArc(e.destination,e.source,e.label);
+            }
+        }
+        return result;
+    }
+
+    /**
+     *
+     * @param source
+     * @param visited
+     * @param result
+     */
+    public void innerDfs(int source,
+                         ArrayList<Boolean> visited,
+                         LinkedList<Integer> result)
+    {
+        if (visited.get(source)) return;
+        visited.set(source,true);
+        for (Edge out : incidency.get(source)) {
+        	System.out.println("lance DFS sur "+out.destination);
+            innerDfs(out.destination,visited,result);
+        }
+        result.addLast(source);
+        return;
+    }
+
+    /**
+     *
+     * @param vertices
+     * @return
+     */
+    public LinkedList<LinkedList<Integer>>
+    fullDfsFromList(LinkedList<Integer> vertices)
+    {
+        ArrayList<Boolean> visited = new ArrayList<>(cardinal);
+        LinkedList<LinkedList<Integer>> result = new LinkedList<>();
+        for (int i = 0; i < cardinal; i++) {
+            visited.add(i,false);
+        }
+        
+        interpretStronglyConnectedComponentFromList(result);
+
+        for (Integer source : vertices) {
+            if (visited.get(source)) continue;
+            LinkedList<Integer> partial = new LinkedList<>();
+            System.out.println("LANCEMENT du DFS sur "+source);
+            innerDfs(source,visited,partial);
+            result.addLast(partial);
+        }
+        interpretStronglyConnectedComponentFromList(result);
+        return result;
+
+    }
+
+    /**
+     *
+     * @return
+     */
+    public LinkedList<LinkedList<Integer>> fullDfs() {
+        LinkedList<Integer> vertices = new LinkedList<>();
+        for (int i = 0; i < cardinal; i++) {
+            vertices.addLast(i);
+        }
+        return fullDfsFromList(vertices);
+    }
+
+    /**
+     *
+     * @param backward
+     * @return
+     */
+    public LinkedList<LinkedList<Integer>>
+    stronglyConnectedComponent(Graph<Label> backward)
+    {
+        LinkedList<LinkedList<Integer>> firstOrdering = fullDfs();
+        LinkedList<Integer> flattening = new LinkedList<>();
+        for (LinkedList<Integer> vertices : firstOrdering) {
+            for (Integer vertex : vertices) {
+                flattening.addFirst(vertex);
+            }
+        }
+        return backward.fullDfsFromList(flattening);
+    }
+
+    /**
+     *
+     * @return
+     */
+    public LinkedList<LinkedList<Integer>> stronglyConnectedComponent() {
+        return this.stronglyConnectedComponent(this.transpose());
+}
+    
+    //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+  //AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    
     
     // display neighboring vertices (raw form)
     @Override
@@ -62,62 +173,53 @@ public class Graph<Label> {
         }
         return result;
     }
-    
-    /* initial function that will launch a DFS 
-       which will aloud to find out if there is 
-       any strongly connected component, and therefore
-       if the 2 SAT formula from the file is satisfiable 
-       or if it isn't */
-    public void launchDFS()
+        
+    /* Initialize Lists needed for the DFS (depth first search)
+       this function mainly supervise the DFS function
+       but also retrieve from the DFS a list that will be used to
+       determine strongly connected components */
+    public void searchStronglyConnectedComponents()
     {
     	LinkedList<Integer> vertices = new LinkedList<Integer>();
     	for (int i = 0; i < cardinal; i++)
             vertices.addLast(i);
     	
-    	createDepthFirstSearch(vertices);   	
-    	
-    }
-    
-    /* Initialize Lists needed for the DFS (depth first search)
-       this function mainly supervise the DFS function
-       but also retrieve from the DFS a list that will be used to
-       determine strongly connected components */
-    public void createDepthFirstSearch(LinkedList<Integer> vertices)
-    {
-    	ArrayList<Boolean> visited = new ArrayList<>(cardinal);
-    	LinkedList<LinkedList<Integer>> result = new LinkedList<>();
-    	for (int i = 0; i < cardinal; i++)
-            visited.add(i, false);
-    	
-    	for(Integer source : vertices)
-    	{
-    		if (visited.get(source)) continue;
-    		LinkedList<Integer> SCC = new LinkedList<>(); // StronglyConnectedComponent
-    		depthFirstSearch(source,visited,SCC);  
-    		result.addLast(SCC);    		
-    	}   
-    	
-    	interpretStronglyConnectedComponentFromList(result);
+    	 ArrayList<Boolean> visited = new ArrayList<>(cardinal);
+         LinkedList<LinkedList<Integer>> result = new LinkedList<>();
+         for (int i = 0; i < cardinal; i++) {
+             visited.add(i,false);
+         }
+         
+         interpretStronglyConnectedComponentFromList(result);
+
+         for (Integer source : vertices) {
+             if (visited.get(source)) continue;
+             LinkedList<Integer> partial = new LinkedList<>();
+             System.out.println("LANCEMENT du DFS sur "+source);
+             innerDfs(source,visited,partial);
+             result.addLast(partial);
+         }
+         interpretStronglyConnectedComponentFromList(result);
+         //return result; 
     }
     
     /* main function proceeding to a 
        depth first search (parcours en profondeur) */
-    public void depthFirstSearch(int source, ArrayList<Boolean> visited, LinkedList<Integer> SCC)
-    {
-    	if (visited.get(source))
-    		return;
-    	
-    	visited.set(source, true);
-    	
-    	for (Edge vertex : incidency.get(source)) 
-			depthFirstSearch(vertex.destination,visited,SCC);
-    	
-    	SCC.addLast(source);
-    	return;
-    	
-    }
+    public void depthFirstSearch(int source,
+            ArrayList<Boolean> visited,
+            LinkedList<Integer> result)
+	{
+	if (visited.get(source)) return;
+	visited.set(source,true);
+	for (Edge out : incidency.get(source)) {
+	System.out.println("lance DFS sur "+out.destination);
+	innerDfs(out.destination,visited,result);
+	}
+	result.addLast(source);
+	return;
+	}
     
-    /* interpret (display) strongly connected components
+    /* display strongly connected components
        from a list passed as an argument */
     public void interpretStronglyConnectedComponentFromList(LinkedList<LinkedList<Integer>> list)
     {
@@ -149,6 +251,7 @@ public class Graph<Label> {
      a variable and its opposite */
     public Boolean isSatisfied(LinkedList<LinkedList<Integer>> list)
     {
+    	//System.out.println("Règle de conversion : si nb < "+cardinal/2+" nb-"+cardinal/2+" et si nb > "+cardinal/2+" nb-"+(cardinal/2-1));
     	for(int i=0; i<list.size(); i++)
     	{
     		for(int j=0; j<list.get(i).size(); j++)
@@ -156,8 +259,12 @@ public class Graph<Label> {
     			int testedValue = list.get(i).get(j);
 	    		for(int k=0; k<list.get(i).size(); k++)
 	    		{
+	    			//System.out.println("test de "+testedValue+":->"+reconvert(testedValue)+" et "+list.get(i).get(k)+"->"+reconvert(list.get(i).get(k)));
 	    			if(reconvert(testedValue)==-reconvert(list.get(i).get(k)))
+	    			{
+	    				//System.out.println("IIIIIIIIICCCCCCCCCCCCIIIIIIIIIIIIIIIIIIIIII");
 	    				return false;
+	    			}
 	    		}
     		}
     	}

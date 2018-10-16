@@ -8,18 +8,23 @@ public abstract class Rendering {
 	public static void main(String[] Args) throws FileNotFoundException
 	{
 		//file List: unsatisfiable formula && file ListF: satisfiable formula
-		ArrayList<Graph<String>> GList = ReadFile("/home/killian/eclipse-workspace/Algo-2-SAT/src/List");
+		ArrayList<Graph<String>> GList = ReadFile("/home/killian/eclipse-workspace/Algo-2-SAT/src/ListTest");
 		
 		// Display() = describe the graph with words and number (readable)
-		System.out.println("Graphe non transposé issu du ficher : \n"+GList.get(0).display());
-		System.out.println("Graphe transposé issu du ficher : \n"+GList.get(1).display());
+		//System.out.println("Graphe non transposé issu du ficher : \n"+GList.get(0).display());
+		//System.out.println("Graphe transposé issu du ficher : \n"+GList.get(1).display());
 		// toString() = display neighboring vertices (raw)
 		//System.out.println(GList.get(0).toString());
 		//System.out.println(GList.get(1).toString());
 		
-		GList.get(1).launchDFS();
+		GList.get(1).searchStronglyConnectedComponents();
+		
+		System.out.println("\n\n\n");
+		
+		System.out.println("Composantes fortement connexes : " + GList.get(0).stronglyConnectedComponent());
 	}
 	
+	//Proceed to the files's reading and store its data	
 	public static ArrayList<Graph<String>> ReadFile(String fp) throws FileNotFoundException
 	{
 		System.out.println("--- Lecture du fichier et création du graphe --- \n");
@@ -46,6 +51,7 @@ public abstract class Rendering {
 		return GList;
 	}
 	
+	//Create a Graph and a transposed Graph based on the file's data
 	public static void buildGraph(Graph<String> G, Graph<String> Gt, int[] tab)
 	{		
 		int[] l1 = new int[2];
@@ -59,11 +65,10 @@ public abstract class Rendering {
 		
 		Gt.addArc(transform(l1[0]), transform(l1[1]), "");
 		Gt.addArc(transform(l2[0]), transform(l2[1]), "");
-		
-		//System.out.println("Il y a un arc du sommet "+transform(l1[0])+" au sommet "+transform(l1[1]));
-		//System.out.println("Il y a un arc du sommet "+transform(l2[0])+" au sommet "+transform(l2[1]));
 	}
 	
+	//Transform the file's data (vertices name) to increase
+	//the graph's readability 
 	public static int transform(int a)
 	{
 		if(a < 0)
