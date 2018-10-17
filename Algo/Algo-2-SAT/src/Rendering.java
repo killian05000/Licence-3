@@ -7,24 +7,11 @@ public abstract class Rendering {
 	
 	public static void main(String[] Args) throws FileNotFoundException
 	{
-		//file List: unsatisfiable formula && file ListF: satisfiable formula
-		ArrayList<Graph<String>> GList = ReadFile("/home/killian/eclipse-workspace/Algo-2-SAT/src/ListTest");
-		
-		// Display() = describe the graph with words and number (readable)
-		//System.out.println("Graphe non transposé issu du ficher : \n"+GList.get(0).display());
-		//System.out.println("Graphe transposé issu du ficher : \n"+GList.get(1).display());
-		// toString() = display neighboring vertices (raw)
-		//System.out.println(GList.get(0).toString());
-		//System.out.println(GList.get(1).toString());
-		
-		GList.get(1).searchStronglyConnectedComponents();
-		
-		System.out.println("\n\n\n");
-		
-		System.out.println("Composantes fortement connexes : " + GList.get(0).stronglyConnectedComponent());
+		ArrayList<Graph<String>> GList = ReadFile("/home/killian/eclipse-workspace/Algo-2-SAT/src/sat6");
+		GList.get(0).interpretStronglyConnectedComponentFromList(GList.get(0).getStronglyConnectedComponent(GList.get(1)));
 	}
 	
-	//Proceed to the files's reading and store its data	
+	//Proceed to the file's reading and store its data	
 	public static ArrayList<Graph<String>> ReadFile(String fp) throws FileNotFoundException
 	{
 		System.out.println("--- Lecture du fichier et création du graphe --- \n");
@@ -67,7 +54,7 @@ public abstract class Rendering {
 		Gt.addArc(transform(l2[0]), transform(l2[1]), "");
 	}
 	
-	//Transform the file's data (vertices name) to increase
+	//Transform vertices name to increase
 	//the graph's readability 
 	public static int transform(int a)
 	{
