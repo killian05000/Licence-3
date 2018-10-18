@@ -11,7 +11,7 @@ public class MyTruck extends JPanel
   private void paintTruck(Painter painter)
   {
     painter.drawRectangle(10,10,70,70);
-    painter.drawRectangle(80,45,40,35);
+    painter.drawRectangle(80,45,40,35);  
     painter.drawCircle(40,80,10);
     painter.drawCircle(100,80,10);
   }

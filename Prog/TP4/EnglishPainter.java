@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 
@@ -14,6 +15,7 @@ public class EnglishPainter extends JPanel
 	
 	public void drawRectangle(Point p1, Point p2)
 	{
+		g.setColor(Color.BLACK);
 		int x1 = (int)p1.getX(); int _x2 = (int)p2.getX();
 		int y1 = (int)p1.getY(); int _y2 = (int)p2.getY();
 		
@@ -21,12 +23,15 @@ public class EnglishPainter extends JPanel
 		int y2 = _y2-y1;
 		
 		g.drawRect(x1, y1, x2, y2);
+		g.fillRect(x1, y1, x2, y2);		
 	}
 
 	public void drawCircle(Point pc, int radius)
 	{
+		g.setColor(Color.RED);
 		int xCenter = (int)pc.getX();
 		int yCenter = (int)pc.getY();
 		g.drawOval(xCenter-radius, yCenter-radius, 2*radius, 2*radius);
+		g.fillOval(xCenter-radius, yCenter-radius, 2*radius, 2*radius);
 	}
 }
