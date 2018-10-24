@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="Algo/Algo-2-SAT/src"/>
+	<classpathentry excluding="TP3/|TP4/" kind="src" path="Prog"/>
+	<classpathentry kind="src" path="Prog/TP3"/>
+	<classpathentry kind="src" path="Prog/TP4"/>
+	<classpathentry kind="output" path="Algo/Algo-2-SAT/bin"/>
+</classpath>
