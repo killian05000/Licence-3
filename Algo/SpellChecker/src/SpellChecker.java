@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -10,20 +11,41 @@ public class SpellChecker
 		File file = new File(filePath);
 		Scanner scanner = new Scanner(file);
 		
-		HashMap<Integer, String> map = new HashMap<Integer, String>();
+		HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
 		
-		int i=0;
 		while(scanner.hasNextLine())
 		{
-			map.put(i, scanner.nextLine());
-			i++;
+			String _word = scanner.nextLine();
+			buildMap(_word,map);
 		}
 		
-		System.out.println(map.get(0));
-		System.out.println(map.get(i-1));
-		
-		System.out.println(map.size());
+		buildMap("Turbo_gnocchi",map);
+		System.out.println("Map.get(rmx) = "+map.get("rmx"));
+		System.out.println("Taille de la map "+map.size());
 	}
+	
+	public void buildMap(String _word, HashMap<String,ArrayList<String>> map)
+	{
+		String word = "<"+_word+">";
+		for (int i=0; i<=word.length()-3; i++)
+		{
+			String Tri = word.substring(i,i+3); 
+			if (map.containsKey(Tri))
+				map.get(Tri).add(_word);
+			else
+			{
+				ArrayList<String> list = new ArrayList<String>();
+				list.add(_word);
+				map.put(Tri, list);
+			}
+		}
+	}
+	
+	public void search(String a)
+	{
+		
+	}
+	
 	public int levenshteinDistance(String a, String b)
 	{
 		int m[][] = new int[a.length()+1][b.length()+1];
