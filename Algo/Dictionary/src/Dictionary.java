@@ -59,13 +59,29 @@ public class Dictionary
 		}			
 	}
 	
-	public void spellChecker(String word)
+	public ArrayList<String> spellChecker(String _word)
 	{
-//		String word = "<"+_word+">";
-//		for (int i=0; i<=word.length()-3; i++)
-//		{
-//			String Trigrame = word.substring(i,i+3);
-//		}
+		ArrayList<String> list = new ArrayList<String>();
+		int it=0;
+		String word = "<"+_word+">";
+		for (int i=0; i<=word.length()-3; i++)
+		{
+			String Trigrame = word.substring(i,i+3);
+			if(map.containsKey(Trigrame) && list.size() <5)
+			{
+				for(int k=0; k<map.get(Trigrame).size(); k++)
+				{
+					it++;
+					if((levenshteinDistance(map.get(Trigrame).get(k), _word) <= 2) && (list.size() <5) && (!list.contains(map.get(Trigrame).get(k))))
+					{
+						//System.out.print(map.get(Trigrame).get(k)+" et "+ _word+" one une distance de "+(levenshteinDistance(map.get(Trigrame).get(k), _word)));
+						list.add(map.get(Trigrame).get(k));
+					}
+				}
+			}				
+		} 
+		System.out.println("nb d'iterations : "+it);
+		return list;
 	}
 	
 	public int levenshteinDistance(String a, String b)

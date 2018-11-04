@@ -11,5 +11,6 @@ public class Main
 		System.out.println("LD cost : "+dico.levenshteinDistance("mireille", "milereille"));
 		System.out.println("Levenshtein distance : "+(System.nanoTime()-launchTime2)/1000000000);
 		System.out.println("Contient le mot : "+dico.search("Killian"));
+		System.out.println(dico.spellChecker("boulnager"));
 	}
 }
