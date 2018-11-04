@@ -4,14 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class SpellChecker
+public class Dictionary
 {
-	public SpellChecker(String filePath) throws FileNotFoundException
+	private HashMap<String, ArrayList<String>> map;
+	
+	public Dictionary(String filePath) throws FileNotFoundException
 	{
 		File file = new File(filePath);
 		Scanner scanner = new Scanner(file);
 		
-		HashMap<String, ArrayList<String>> map = new HashMap<String, ArrayList<String>>();
+		map = new HashMap<String, ArrayList<String>>();
 		
 		while(scanner.hasNextLine())
 		{
@@ -21,7 +23,8 @@ public class SpellChecker
 		
 		buildMap("Turbo_gnocchi",map);
 		System.out.println("Map.get(rmx) = "+map.get("rmx"));
-		System.out.println("Taille de la map "+map.size());
+		System.out.println("Taille de la map : "+map.size());
+		scanner.close();
 	}
 	
 	public void buildMap(String _word, HashMap<String,ArrayList<String>> map)
@@ -29,21 +32,40 @@ public class SpellChecker
 		String word = "<"+_word+">";
 		for (int i=0; i<=word.length()-3; i++)
 		{
-			String Tri = word.substring(i,i+3); 
-			if (map.containsKey(Tri))
-				map.get(Tri).add(_word);
+			String Trigrame = word.substring(i,i+3); 
+			if (map.containsKey(Trigrame))
+				map.get(Trigrame).add(_word);
 			else
 			{
 				ArrayList<String> list = new ArrayList<String>();
 				list.add(_word);
-				map.put(Tri, list);
+				map.put(Trigrame, list);
 			}
 		}
 	}
 	
-	public void search(String a)
+	public boolean search(String word)
 	{
+		String Trigrame = word.substring(1,4);	
 		
+		if (!map.containsKey(Trigrame))
+			return false;
+		else
+		{
+			if(map.get(Trigrame).contains(word))
+				return true;
+			else
+				return false;
+		}			
+	}
+	
+	public void spellChecker(String word)
+	{
+//		String word = "<"+_word+">";
+//		for (int i=0; i<=word.length()-3; i++)
+//		{
+//			String Trigrame = word.substring(i,i+3);
+//		}
 	}
 	
 	public int levenshteinDistance(String a, String b)
