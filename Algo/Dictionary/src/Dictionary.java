@@ -66,7 +66,7 @@ public class Dictionary
 				return true;
 			else
 			{
-				TriInCommon(word);
+				spellChecker(word);
 				return false;
 			}
 		}		
@@ -88,13 +88,13 @@ public class Dictionary
 		
 		for(String elements : words)
 		{
-			TriInCommon(elements);
+			spellChecker(elements);
 		}
 		
 		scanner.close();		
 	}
 	
-	public HashMap<String, Integer> TriInCommon(String _word)
+	public HashMap<String, Integer> spellChecker(String _word)
 	{
 		HashMap<String, Integer> TriMap = new HashMap<String, Integer>();
 		ArrayList<String> list = new ArrayList<String>();
@@ -159,10 +159,6 @@ public class Dictionary
 		}
 		
 		lastWords = mapSortAscending(lastWords);
-		
-		// Trier les valeurs de TriMap dans l'ordre croissant
-		// garder les 100 premiers et faire une levensthein sur les 100
-		// retrier et prendre les 5 plus petites distances
 
 		return lastWords;
 	}

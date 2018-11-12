@@ -15,9 +15,9 @@ public class Main
 	
 	public static void exec() throws FileNotFoundException
 	{
-		Dictionary dico = new Dictionary("/home/killian/Prog/GitHub/Licence-3/Algo/Dictionary/src/dico.txt");
 		double launchTime = System.nanoTime();
-		dico.correctFile("/home/killian/Prog/GitHub/Licence-3/Algo/Dictionary/src/fautes.txt");
+		Dictionary dico = new Dictionary("src/dico.txt");
+		//dico.correctFile("src/fautes.txt");
 		System.out.println("Temps d'execution de la fonction : "+(System.nanoTime()-launchTime)/1000000000);
 	}
 }
