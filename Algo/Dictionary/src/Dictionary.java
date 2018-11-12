@@ -22,9 +22,9 @@ public class Dictionary
 		
 		map = new HashMap<String, ArrayList<String>>();
 		
-		double launchTime =System.nanoTime();
-		buildMap("Algorithmique", map);
-		System.out.println("Trigramme Algorithmique : "+(System.nanoTime()-launchTime)/1000000000);
+//		double launchTime =System.nanoTime();
+//		buildMap("Algorithmique", map);
+//		System.out.println("Trigramme Algorithmique : "+(System.nanoTime()-launchTime)/1000000000);
 
 		
 		while(scanner.hasNextLine())
@@ -33,8 +33,7 @@ public class Dictionary
 			buildMap(_word,map);
 		}
 		
-		System.out.println("Map.get(rmx) = "+map.get("rmx"));
-		System.out.println("Taille de la map : "+map.size());
+		System.out.println("Taille du dico trigramme : "+map.size());
 		scanner.close();
 	}
 	
@@ -66,15 +65,39 @@ public class Dictionary
 			if(map.get(Trigrame).contains(word))
 				return true;
 			else
+			{
+				TriInCommon(word);
 				return false;
+			}
 		}		
+	}
+	
+	public void correctFile(String filePath) throws FileNotFoundException
+	{
+		File file = new File(filePath);
+		Scanner scanner = new Scanner(file);
+		
+		ArrayList<String> words = new ArrayList<String>();
+		int i=0;
+		
+		while(scanner.hasNextLine())
+		{
+			String _word = scanner.nextLine();
+			words.add(_word);
+		}
+		
+		for(String elements : words)
+		{
+			TriInCommon(elements);
+		}
+		
+		scanner.close();		
 	}
 	
 	public HashMap<String, Integer> TriInCommon(String _word)
 	{
 		HashMap<String, Integer> TriMap = new HashMap<String, Integer>();
 		ArrayList<String> list = new ArrayList<String>();
-		int it=0;
 		String word = "<"+_word+">";
 		for (int i=0; i<=word.length()-3; i++)
 		{
@@ -83,7 +106,6 @@ public class Dictionary
 			{
 				for(int k=0; k<map.get(Trigrame).size(); k++) 
 				{
-					it++;
 					String word2 = map.get(Trigrame).get(k);
 					if(TriMap.containsKey(word2))
 					{
@@ -141,8 +163,7 @@ public class Dictionary
 		// Trier les valeurs de TriMap dans l'ordre croissant
 		// garder les 100 premiers et faire une levensthein sur les 100
 		// retrier et prendre les 5 plus petites distances
-		
-		System.out.println("nb d'iterations : "+it);
+
 		return lastWords;
 	}
 	
