@@ -88,8 +88,8 @@ public class Dictionary
 			words.add(_word);
 		}
 		
-		/* The following code block is gonna correct the File 20 times
-		 * so we can get an average of the actual execution time cost.
+		/* The following code block is gonna correct the File a several amount
+		 * of times so we can get an average of the actual execution time cost.
 		 */
 		
 		int count = 20; // number of function launches
