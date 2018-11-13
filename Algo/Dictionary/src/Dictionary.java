@@ -34,7 +34,7 @@ public class Dictionary
 		System.out.println("Temps total de la création du dictionnaire : "+(System.nanoTime()-launchTime)/1000000000);
 	}
 	
-	//create the Trigramme dictionary
+	/* create the Trigramme dictionary */
 	public void buildMap(String _word, HashMap<String,ArrayList<String>> map)
 	{
 		String word = "<"+_word+">";
@@ -52,7 +52,7 @@ public class Dictionary
 		}
 	}
 	
-	// Check if a word is present in the dictionary
+	/* Check if the word passed in argument is present in the dictionary */
 	public boolean isCorrect(String word)
 	{
 		String Trigrame = word.substring(1,4);	
@@ -77,7 +77,6 @@ public class Dictionary
 	 */
 	public void correctFile(String filePath) throws FileNotFoundException
 	{
-		double launchTime = System.nanoTime();
 		File file = new File(filePath);
 		Scanner scanner = new Scanner(file);
 
@@ -89,18 +88,32 @@ public class Dictionary
 			words.add(_word);
 		}
 		
-		for(String element : words)
-		{
-			spellChecker(element);
-			//System.out.println(element+" = "+spellChecker(element));
-		}
+		/* The following code block is gonna correct the File 20 times
+		 * so we can get an average of the actual execution time cost.
+		 */
 		
+		int count = 20; // number of function launches
+		double total = 0.0;
+
+		for (int i = 0; i < count; ++i) 
+		{
+			double launchTime = System.nanoTime();
+
+			for (String element : words)
+			{
+				spellChecker(element);
+				//System.out.println(element+" = "+spellChecker(element)); // display the words correction one by one
+			}
+
+			total += System.nanoTime() - launchTime;
+		}
+
+		System.out.println("Temps total en moyenne de la correction du fichier : " + total / count / 1000000000);
 		scanner.close();
-		System.out.println("Temps total de la correction du fichier : "+(System.nanoTime()-launchTime)/1000000000);
 	}
 	
-	// Return 5 similar words to the word passed in argument
-	public HashMap<String, Integer> spellChecker(String _word)
+	/* Return 5 similar words to the word passed in argument */
+	public List<String> spellChecker(String _word)
 	{
 		HashMap<String, Integer> TriMap = new HashMap<String, Integer>();
 		String word = "<"+_word+">";
@@ -126,14 +139,14 @@ public class Dictionary
 		 * with the word passed in the function's argument.
 		 */
 		
-		TriMap = mapSortDescending(TriMap);
-		HashMap<String, Integer> bestTriWords = new HashMap<String, Integer>();
+		List<String> triList = mapSortDescending(TriMap);
+		List<String> bestTriWords = new ArrayList<>(triList.size());
 		int counter =0;
-		for(Entry<String, Integer> mapEntry : TriMap.entrySet())
+		for(String w : triList)
 		{
 		  if(counter<100)
 		  {
-		    bestTriWords.put(mapEntry.getKey(), mapEntry.getValue());
+		    bestTriWords.add(w);
 		    counter++;
 		  }
 		  else
@@ -147,38 +160,37 @@ public class Dictionary
 		
 		HashMap<String, Integer> levenshteinDWords = new HashMap<String, Integer>();
 		
-		for(Entry<String, Integer> mapEntry : bestTriWords.entrySet())
+		for(String w : bestTriWords)
 		{
-			int dist = levenshteinDistance(_word, mapEntry.getKey());
-			levenshteinDWords.put(mapEntry.getKey(), dist);
+			int dist = levenshteinDistance(_word, w);
+			levenshteinDWords.put(w, dist);
 		}
 		
-		levenshteinDWords = mapSortAscending(levenshteinDWords);
+		List<String> levenshteinDList = mapSortAscending(levenshteinDWords);
 		
 		// Finally we only retrieve 5 words with the lowest levenshtein distance
 		
-		HashMap<String, Integer> closestWords = new HashMap<String, Integer>();
+		List<String> closestWords = new ArrayList<>(levenshteinDList.size());
 		counter=0;
 		
-		for(Entry<String, Integer> mapEntry : levenshteinDWords.entrySet())
+		for(String w : levenshteinDList)
 		{
 		  if(counter<5)
 		  {
-		    closestWords.put(mapEntry.getKey(), mapEntry.getValue());
+		    closestWords.add(w);
 		    counter++;
 		  }
 		  else
 			  break;
 		}
-		
-		closestWords = mapSortAscending(closestWords);
-
+		//System.out.println(closestWords);
 		return closestWords;
 	}
 	
-	// Calcul and return the levenshtein distance between 2 words, this distance
-	// is the number of operations required to go from one word to the
-	// other.
+	/* Calcul and return the levenshtein distance between 2 words, this distance
+	 * is the number of operations required to go from one word to the
+	 * other.
+	 */
 	public int levenshteinDistance(String a, String b)
 	{
 		int m[][] = new int[a.length()+1][b.length()+1];
@@ -217,8 +229,8 @@ public class Dictionary
 			return c;		
 	}
 	
-	// sort a map increasingly
-	public static HashMap<String, Integer> mapSortAscending( HashMap<String, Integer> map )
+	/* sort the key of a map<String, Int> increasingly and return a list*/
+	public static List<String> mapSortAscending( HashMap<String, Integer> map )
 	{
 		   List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>( map.entrySet() );
 		   
@@ -230,14 +242,16 @@ public class Dictionary
 		      }
 		   });
 
-		   HashMap<String, Integer> map_apres = new LinkedHashMap<String, Integer>();
-		   for(Map.Entry<String, Integer> entry : list)
-		     map_apres.put( entry.getKey(), entry.getValue() );
-		   return map_apres;
+		   List<String> l = new ArrayList<>(map.size());
+
+			for (Map.Entry<String, Integer> entry : list) {
+				l.add(entry.getKey());
+			}
+			return l;
 	}
 	
-	// sort a map decreasingly
-	public static HashMap<String, Integer> mapSortDescending( HashMap<String, Integer> map )
+	/* sort the key of a map<String, Int> decreasingly and return a list */
+	public static List<String> mapSortDescending( HashMap<String, Integer> map )
 	{
 		   List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>( map.entrySet() );
 		   
@@ -249,10 +263,12 @@ public class Dictionary
 		      }
 		   });
 
-		   HashMap<String, Integer> map_apres = new LinkedHashMap<String, Integer>();
-		   for(Map.Entry<String, Integer> entry : list)
-		     map_apres.put( entry.getKey(), entry.getValue() );
-		   return map_apres;
+		   List<String> l = new ArrayList<>(map.size());
+
+			for (Map.Entry<String, Integer> entry : list) {
+				l.add(entry.getKey());
+			}
+			return l;
 	}
 	
 }
