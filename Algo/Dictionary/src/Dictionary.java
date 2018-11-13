@@ -17,15 +17,11 @@ public class Dictionary
 	
 	public Dictionary(String filePath) throws FileNotFoundException
 	{
+		double launchTime = System.nanoTime();
 		File file = new File(filePath);
 		Scanner scanner = new Scanner(file);
 		
 		map = new HashMap<String, ArrayList<String>>();
-		
-//		double launchTime =System.nanoTime();
-//		buildMap("Algorithmique", map);
-//		System.out.println("Trigramme Algorithmique : "+(System.nanoTime()-launchTime)/1000000000);
-
 		
 		while(scanner.hasNextLine())
 		{
@@ -35,8 +31,10 @@ public class Dictionary
 		
 		System.out.println("Taille du dico trigramme : "+map.size());
 		scanner.close();
+		System.out.println("Temps total de la création du dictionnaire : "+(System.nanoTime()-launchTime)/1000000000);
 	}
 	
+	//create the Trigramme dictionary
 	public void buildMap(String _word, HashMap<String,ArrayList<String>> map)
 	{
 		String word = "<"+_word+">";
@@ -54,7 +52,8 @@ public class Dictionary
 		}
 	}
 	
-	public boolean search(String word)
+	// Check if a word is present in the dictionary
+	public boolean isCorrect(String word)
 	{
 		String Trigrame = word.substring(1,4);	
 		
@@ -72,13 +71,17 @@ public class Dictionary
 		}		
 	}
 	
+	/* Call spellChecker upon each words of the file and display
+	 * the time cost of this function. Can also display the corrections
+	 * word by word.
+	 */
 	public void correctFile(String filePath) throws FileNotFoundException
 	{
+		double launchTime = System.nanoTime();
 		File file = new File(filePath);
 		Scanner scanner = new Scanner(file);
-		
+
 		ArrayList<String> words = new ArrayList<String>();
-		int i=0;
 		
 		while(scanner.hasNextLine())
 		{
@@ -86,19 +89,22 @@ public class Dictionary
 			words.add(_word);
 		}
 		
-		for(String elements : words)
+		for(String element : words)
 		{
-			spellChecker(elements);
+			spellChecker(element);
+			//System.out.println(element+" = "+spellChecker(element));
 		}
 		
-		scanner.close();		
+		scanner.close();
+		System.out.println("Temps total de la correction du fichier : "+(System.nanoTime()-launchTime)/1000000000);
 	}
 	
+	// Return 5 similar words to the word passed in argument
 	public HashMap<String, Integer> spellChecker(String _word)
 	{
 		HashMap<String, Integer> TriMap = new HashMap<String, Integer>();
-		ArrayList<String> list = new ArrayList<String>();
 		String word = "<"+_word+">";
+		
 		for (int i=0; i<=word.length()-3; i++)
 		{
 			String Trigrame = word.substring(i,i+3);
@@ -106,75 +112,81 @@ public class Dictionary
 			{
 				for(int k=0; k<map.get(Trigrame).size(); k++) 
 				{
-					String word2 = map.get(Trigrame).get(k);
+					String word2 = map.get(Trigrame).get(k);					
 					if(TriMap.containsKey(word2))
-					{
 						TriMap.put(word2,TriMap.get(word2)+1);
-					}
 					else
 						TriMap.put(word2,1);
-				
-					//System.out.print(map.get(Trigrame).get(k)+" et "+ _word+" one une distance de "+(levenshteinDistance(map.get(Trigrame).get(k), _word)));
-					//list.add(map.get(Trigrame).get(k));
 				}
 			}				
 		} 
 		
+		/* The following part is gonna sort the map <Word, Trig. in common> decreasingly
+		 * so we can keep the 100 first words which have the most trigrammes in common
+		 * with the word passed in the function's argument.
+		 */
+		
 		TriMap = mapSortDescending(TriMap);
-		HashMap<String, Integer> bestWords = new HashMap<String, Integer>();
+		HashMap<String, Integer> bestTriWords = new HashMap<String, Integer>();
 		int counter =0;
 		for(Entry<String, Integer> mapEntry : TriMap.entrySet())
 		{
 		  if(counter<100)
 		  {
-		    bestWords.put(mapEntry.getKey(), mapEntry.getValue());
+		    bestTriWords.put(mapEntry.getKey(), mapEntry.getValue());
 		    counter++;
 		  }
 		  else
 			  break;
 		}
 		
-		HashMap<String, Integer> ultimateWords = new HashMap<String, Integer>();
+		/* Here we are gonna proceed to a calculation of the levenshtein distance upon
+		 * the map obtained previously and sort the resulting map increasingly. Then the
+		 * first values of the map are the words with the lowest levenshtein distance.
+		 */
 		
-		for(Entry<String, Integer> mapEntry : bestWords.entrySet())
+		HashMap<String, Integer> levenshteinDWords = new HashMap<String, Integer>();
+		
+		for(Entry<String, Integer> mapEntry : bestTriWords.entrySet())
 		{
 			int dist = levenshteinDistance(_word, mapEntry.getKey());
-			ultimateWords.put(mapEntry.getKey(), dist);
+			levenshteinDWords.put(mapEntry.getKey(), dist);
 		}
 		
-		ultimateWords = mapSortAscending(ultimateWords);
+		levenshteinDWords = mapSortAscending(levenshteinDWords);
 		
-		HashMap<String, Integer> lastWords = new HashMap<String, Integer>();
+		// Finally we only retrieve 5 words with the lowest levenshtein distance
+		
+		HashMap<String, Integer> closestWords = new HashMap<String, Integer>();
 		counter=0;
 		
-		for(Entry<String, Integer> mapEntry : ultimateWords.entrySet())
+		for(Entry<String, Integer> mapEntry : levenshteinDWords.entrySet())
 		{
 		  if(counter<5)
 		  {
-		    lastWords.put(mapEntry.getKey(), mapEntry.getValue());
+		    closestWords.put(mapEntry.getKey(), mapEntry.getValue());
 		    counter++;
 		  }
 		  else
 			  break;
 		}
 		
-		lastWords = mapSortAscending(lastWords);
+		closestWords = mapSortAscending(closestWords);
 
-		return lastWords;
+		return closestWords;
 	}
 	
+	// Calcul and return the levenshtein distance between 2 words, this distance
+	// is the number of operations required to go from one word to the
+	// other.
 	public int levenshteinDistance(String a, String b)
 	{
 		int m[][] = new int[a.length()+1][b.length()+1];
 		
 		for (int i=0; i<m.length; i++)
-		{
 			m[i][0]=i;
-		}		
 		for (int i=0; i<m[0].length; i++)
-		{
-			m[0][i]=i;
-		}		
+			m[0][i]=i;	
 		
 		for (int i=1; i<m.length; i++)
 		{
@@ -183,31 +195,14 @@ public class Dictionary
 				int db = m[i-1][k-1]; // diagonal box
 				int lb = m[i][k-1]; // left box
 				int tb = m[i-1][k]; // top box
-				
-				//System.out.println("--> Comparaison "+a.charAt(i-1)+" et "+b.charAt(k-1));
-				
+								
 				if(a.charAt(i-1) == b.charAt(k-1))
-				{
-					//System.out.println("min entre "+db+" "+(lb+1)+" "+(tb+1)+" = "+min(db, lb+1, tb+1));
 					m[i][k]=min(db, lb+1, tb+1);
-				}
-				else				
-				{
-					//System.out.println("min entre "+(db+1)+" "+(lb+1)+" "+(tb+1)+" = "+min(db+1, lb+1, tb+1));
-					m[i][k]=min(db+1, lb+1, tb+1);
-				}
-			}
-			//System.out.println();
-		}
 	
-//		for(int i=0; i<m.length; i++)
-//		{
-//			for(int k=0; k<m[0].length; k++)
-//			{
-//				System.out.print(m[i][k]+"  ");
-//			}
-//			System.out.println();
-//		}
+				else			
+					m[i][k]=min(db+1, lb+1, tb+1);
+			}
+		}
 		
 		return m[m.length-1][m[0].length-1];		
 	}
@@ -222,6 +217,7 @@ public class Dictionary
 			return c;		
 	}
 	
+	// sort a map increasingly
 	public static HashMap<String, Integer> mapSortAscending( HashMap<String, Integer> map )
 	{
 		   List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>( map.entrySet() );
@@ -240,6 +236,7 @@ public class Dictionary
 		   return map_apres;
 	}
 	
+	// sort a map decreasingly
 	public static HashMap<String, Integer> mapSortDescending( HashMap<String, Integer> map )
 	{
 		   List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>( map.entrySet() );
