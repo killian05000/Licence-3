@@ -92,7 +92,7 @@ public class Dictionary
 		 * of times so we can get an average of the actual execution time cost.
 		 */
 		
-		int count = 1; // number of function launches
+		int count = 10; // number of function launches
 		double total = 0.0;
 
 		for (int i = 0; i < count; ++i) 
