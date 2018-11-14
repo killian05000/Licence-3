@@ -92,7 +92,7 @@ public class Dictionary
 		 * of times so we can get an average of the actual execution time cost.
 		 */
 		
-		int count = 20; // number of function launches
+		int count = 1; // number of function launches
 		double total = 0.0;
 
 		for (int i = 0; i < count; ++i) 
@@ -100,10 +100,7 @@ public class Dictionary
 			double launchTime = System.nanoTime();
 
 			for (String element : words)
-			{
 				spellChecker(element);
-				//System.out.println(element+" = "+spellChecker(element)); // display the words correction one by one
-			}
 
 			total += System.nanoTime() - launchTime;
 		}
@@ -125,7 +122,7 @@ public class Dictionary
 			{
 				for(int k=0; k<map.get(Trigrame).size(); k++) 
 				{
-					String word2 = map.get(Trigrame).get(k);					
+					String word2 = map.get(Trigrame).get(k);
 					if(TriMap.containsKey(word2))
 						TriMap.put(word2,TriMap.get(word2)+1);
 					else
@@ -133,13 +130,14 @@ public class Dictionary
 				}
 			}				
 		} 
-		
+				
 		/* The following part is gonna sort the map <Word, Trig. in common> decreasingly
 		 * so we can keep the 100 first words which have the most trigrammes in common
 		 * with the word passed in the function's argument.
 		 */
 		
 		List<String> triList = mapSortDescending(TriMap);
+		//System.out.println(TriMap);
 		List<String> bestTriWords = new ArrayList<>(triList.size());
 		int counter =0;
 		for(String w : triList)
@@ -183,7 +181,7 @@ public class Dictionary
 		  else
 			  break;
 		}
-		//System.out.println(closestWords);
+		System.out.println(_word+" = "+closestWords); // display the word's correction
 		return closestWords;
 	}
 	
