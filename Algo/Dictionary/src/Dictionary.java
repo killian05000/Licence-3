@@ -31,7 +31,7 @@ public class Dictionary
 		
 		System.out.println("Taille du dico trigramme : "+map.size());
 		scanner.close();
-		System.out.println("Temps total de la création du dictionnaire : "+(System.nanoTime()-launchTime)/1000000000);
+		System.out.println("Temps total de la création du dictionnaire : "+(System.nanoTime()-launchTime)/1000000000+" s.");
 	}
 	
 	/* create the Trigramme dictionary */
@@ -105,7 +105,7 @@ public class Dictionary
 			total += System.nanoTime() - launchTime;
 		}
 
-		System.out.println("Temps total en moyenne de la correction du fichier : " + total / count / 1000000000);
+		System.out.println("Temps total en moyenne de la correction du fichier : " + total / count / 1000000000+" s.");
 		scanner.close();
 	}
 	
@@ -181,7 +181,7 @@ public class Dictionary
 		  else
 			  break;
 		}
-		System.out.println(_word+" = "+closestWords); // display the word's correction
+		//System.out.println(_word+" = "+closestWords); // display the word's correction
 		return closestWords;
 	}
 	
