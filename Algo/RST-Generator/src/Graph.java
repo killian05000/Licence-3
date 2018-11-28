@@ -21,9 +21,16 @@ public class Graph implements Iterable<Edge>
 	
 	// Check if the Node number passed as argument is present in the graph
 	public boolean isVertex(int index) {
+		for(LinkedList Edge : adjacency)
+			return (Edge.contains(index));
 		
+		for(LinkedList ArcIn : inAdjacency)
+			return (ArcIn.contains(index));
+		
+		for(LinkedList ArcOut : outAdjacency)
+			return (ArcOut.contains(index));				
+			
 		return false;
-	    // à remplir
 	}
 	
 	public <T> ArrayList<LinkedList<T>> makeList(int size) {
