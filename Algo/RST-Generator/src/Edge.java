@@ -38,4 +38,14 @@ public class Edge implements Comparable<Edge> {
 		return this.dest;
 	}
 	
+	public void setSource(int _source)
+	{
+		this.source = _source;
+	}
+	
+	public void setDest(int _dest)
+	{
+		this.dest = _dest;
+	}
+	
 }
