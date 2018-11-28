@@ -1,3 +1,5 @@
+package src;
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,8 +20,7 @@ public class MainStub {
 		// TOOO : modifier l'algorithme utiliser ici.
 		
 		// Non-random BFS
-		ArrayList<Arc> randomArcTree = 
-				BreadthFirstSearch.generateTree(graph,0);
+		ArrayList<Arc> randomArcTree = BreadthFirstSearch.generateTree(graph,0);
 		randomTree = new ArrayList<>();
 		for (Arc a : randomArcTree) randomTree.add(a.support);
 	

@@ -1,9 +1,12 @@
+package src;
 
-public class Complete {
+public class CompleteGraph
+{
 
 	Graph graph;
 	
-	public Complete(int order) {
+	public CompleteGraph(int order)
+	{
 		this.graph = new Graph(order);
 		for(int i = 0; i < order; i++)
 			for (int j = i+1; j < order; j++)

@@ -1,5 +1,7 @@
+package src;
 
-public class Arc {
+public class Arc 
+{
 	Edge support;
 	boolean reversed;
 	

@@ -1,10 +1,13 @@
+package src;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 
-public class Graph implements Iterable<Edge>{
+public class Graph implements Iterable<Edge>
+{
     // classe de graphe non orientés permettant de manipuler
     // en même temps des arcs (orientés)
     // pour pouvoir stocker un arbre couvrant, en plus du graphe
@@ -12,11 +15,13 @@ public class Graph implements Iterable<Edge>{
 	int order;
 	int edgeCardinality;
 	
-	ArrayList<LinkedList<Edge>> adjacency;
-	ArrayList<LinkedList<Arc>> inAdjacency;
+	ArrayList<LinkedList<Edge>> adjacency; // Undirected graph Edges's List
+	ArrayList<LinkedList<Arc>> inAdjacency; // Directed graph
 	ArrayList<LinkedList<Arc>> outAdjacency;
 	
+	// Check if the Node number passed as argument is present in the graph
 	public boolean isVertex(int index) {
+		
 		return false;
 	    // à remplir
 	}
