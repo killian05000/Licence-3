@@ -94,7 +94,7 @@ public class Graph implements Iterable<Edge>
 
 	public Object outNeighbours(int vertex) 
 	{
-//		ArrayList<Arc> list = new ArrayList<>();
+		ArrayList<Arc> list = new ArrayList<>();
 //		
 //		for(LinkedList Edges : adjacency)
 //		{
@@ -103,7 +103,7 @@ public class Graph implements Iterable<Edge>
 //					list.add(ed.getDest());
 //		}
 		// TODO Auto-generated method stub
-		return null;
+		return list;
 	}
 	
 }

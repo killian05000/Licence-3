@@ -101,9 +101,9 @@ public class MainStub {
 		window.setLocationRelativeTo(null);
 
 
-		for (final Edge e : randomTree) {
+		for (final Edge e : randomTree)
 					laby.addEdge(e);
-		}
+		
 		laby.drawLabyrinth();
 
 		window.setVisible(true);

@@ -6,18 +6,37 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 
-public class RootedTree {
+public class RootedTree 
+{
 	
-	private int getHeight(Node n) {
+	public RootedTree(ArrayList<Edge> edges, int root) 
+	{
+		this.order = edges.size() + 1;
+		Graph graph = new Graph(order);
+		for (Edge e : edges) graph.addEdge(e);
+
+		createTree(root, BreadthFirstSearch.generateTree(graph, root));
+		
+		rerootTree();
+		computeAllHeights();
+		computeAllSizes();
+		computeAllDepths();
+	}
+	
+	private int getHeight(Node n) 
+	{
 		return (n == null ? -1 : n.height);
 	}
 	
-	private int getSize(Node n) {
+	private int getSize(Node n) 
+	{
 		return (n == null ? -1 : n.size);
 	}
 	
+	///////////////PRIVATE CLASS NODE START///////////////////
 
-	private class Node {
+	private class Node 
+	{
 		int vertex;
 		ArrayList<Node> sons;
 		
@@ -25,14 +44,16 @@ public class RootedTree {
 		int size;
 		int depth;
 		
-		public Node(int vertex) {
+		public Node(int vertex) 
+		{
 			this.vertex = vertex;
 			this.sons = new ArrayList<>();
 			this.height = 0;
 		}
 		
 		
-		public void setHeight() {
+		public void setHeight() 
+		{
 			int maxHeight = -1;
 			for (Node son : this.sons) 
 				maxHeight = Math.max(maxHeight, son.height);
@@ -40,37 +61,44 @@ public class RootedTree {
 		}
 		
 		
-		private void setSize() {
+		private void setSize() 
+		{
 			size = 1;
 			for (Node son : this.sons) size = size + son.size;
 		}
 		
-		private void setSonsDepth() {
+		private void setSonsDepth() 
+		{
 			for (Node son : this.sons) son.depth = this.depth + 1;
 		}
 		
-		private Node maxSizeSon() {
+		private Node maxSizeSon() 
+		{
 			Node maxSon = null;
-			for (Node son : sons) { 
+			for (Node son : sons) 
 				if (son.size > getSize(maxSon)) maxSon = son;
-			}
+
 			return maxSon;
 		}
 		
-		private Node maxHeightSon() {
+		private Node maxHeightSon() 
+		{
 			Node maxSon = null;
-			for (Node son : sons) {
+			for (Node son : sons)
 				if (son.height > getHeight(maxSon)) maxSon = son; 
-			}
+			
 			return maxSon;
 		}
 		
 		
-		private int secondMaxHeight() {
+		private int secondMaxHeight() 
+		{
 			int maxHeight = -1;
 			int secondMaxHeight = -1;
-			for (Node son : sons) {
-				if (son.height > secondMaxHeight) {
+			for (Node son : sons) 
+			{
+				if (son.height > secondMaxHeight) 
+				{
 					secondMaxHeight = Math.min(maxHeight, son.height);
 					maxHeight = Math.max(maxHeight, son.height);
 				}
@@ -78,19 +106,18 @@ public class RootedTree {
 			return secondMaxHeight;
 		}
 
-		private void print() {
+		private void print() 
+		{
 			System.out.print("Node " + this.vertex + ", sons: ");
-			for (Node son : this.sons) {
+			for (Node son : this.sons) 
 				System.out.print(son.vertex + " ");
-			}
-			System.out.println("(height: " + this.height 
-							 + ", size: " + this.size
-							 + ", 2nd height: " + this.secondMaxHeight()
-							 + ", depth: " + this.depth
-							 + ")");
+			
+			System.out.println("(height: "+this.height+", size: "+this.size+", 2nd height: "+this.secondMaxHeight()+ ", depth: "+this.depth+")");
 		}
 		
 	}
+	
+	///////////////PRIVATE CLASS NODE END///////////////////
 	
 	// to write recursive algorithms without recursion
 	ArrayList<Node> inverseBfsOrder;
@@ -103,43 +130,57 @@ public class RootedTree {
 
 	// Tree initialization
 	
-	public void computeAllHeights() {
-		for(Node n : inverseBfsOrder) n.setHeight();
+	public void computeAllHeights() 
+	{
+		for(Node n : inverseBfsOrder)
+			n.setHeight();
 	}
 	
 	
-	public void computeAllSizes() {
-		for (Node n : inverseBfsOrder) n.setSize();
+	public void computeAllSizes()
+	{
+		for (Node n : inverseBfsOrder)
+			n.setSize();
 	}
 	
 	
-	public void computeAllDepths() {
+	public void computeAllDepths() 
+	{
 		root.depth = 0;
 		for (Node n : bfsOrder) n.setSonsDepth();
 	}
-	
 	
 	
 	// Tree invariants
 	
 	
 	// sum of distances between all pairs of vertices.
-	public long getWienerIndex() {
+	public long getWienerIndex() 
+	{
 		long count = 0;
-		for (Node n : bfsOrder) {
-			if (n == root) continue;
+		for (Node n : bfsOrder) 
+		{
+			if (n == root)
+				continue;
+			
 			count = count + n.size * (order - n.size);
 		}
 		return count;
 	}
 	
 	
-	public int[] getDegreeDistribution(int maxDegree) {
+	public int[] getDegreeDistribution(int maxDegree) 
+	{
 		int maxIndex = Math.min(maxDegree,order-1);
 		int[] degrees = new int[1+maxIndex];
-		for(int i = 0; i <= maxIndex; i++) degrees[i] = 0;
-		int degree;
-		for (Node n : bfsOrder) {
+		
+		for(int i = 0; i <= maxIndex; i++) 
+			degrees[i] = 0;
+		
+		
+		int degree;		
+		for (Node n : bfsOrder) 
+		{
 			degree = n.sons.size() + (n == root ? 0 : 1);
 			if (degree <= maxIndex)
 				degrees[degree]++;
@@ -148,76 +189,91 @@ public class RootedTree {
 	}
 	
 	
-	public int getRadius() {
+	public int getRadius() 
+	{
 		return root.height;
 	}
 	
 	
-	public int getDiameter() {
+	public int getDiameter() 
+	{
 		return root.height + root.secondMaxHeight() + 1;
 	}
 	
 	
-	private Node getCentroidNode() {
+	private Node getCentroidNode() 
+	{
 		Node centroid = root;
 		while (centroid.maxSizeSon().size * 2 > order)
 			centroid = centroid.maxSizeSon();
+		
 		return centroid;
 	}
 	
-	public int getDistanceFromCenterToCentroid() {
+	public int getDistanceFromCenterToCentroid() 
+	{
 		return getCentroidNode().depth;
 	}
 	
-	public double getAverageEccentricity() {
+	public double getAverageEccentricity() 
+	{
 		int sumEccentricity = 0;
 		for (Node n : bfsOrder) 
 			sumEccentricity = sumEccentricity + n.depth;
+		
 		return (double) sumEccentricity / (double) order;
 	}
 	
 	
 	// Node accessors
 	
-	public int getRoot() { return root.vertex; }
+	public int getRoot() 
+	{ 
+		return root.vertex; 
+	}
 	
-	public int getHeight(int vertex) { 
+	public int getHeight(int vertex) 
+	{ 
 		return nodes[vertex].height;
 	}
 	
-	public int getDepth(int vertex) {
+	public int getDepth(int vertex) 
+	{
 		return nodes[vertex].depth;
 	}
 	
-	public int getSubtreeSize(int vertex) {
+	public int getSubtreeSize(int vertex) 
+	{
 		return nodes[vertex].size;
 	}
 	
-	public int getCentroid() {
+	public int getCentroid() 
+	{
 		return getCentroidNode().vertex;
 	}
 	
 	
 	// printers
 	
-	public void printStats() {
+	public void printStats() 
+	{
 		System.out.println("Order: " + order);
 		System.out.println("Diameter: " + getDiameter());
 		System.out.println("Radius: " + getRadius());
 		System.out.println("Wiener index: " + getWienerIndex());
-		System.out.println("Center to centroid: " 
-							+ getDistanceFromCenterToCentroid());
-		System.out.println("Average eccentricity: " 
-						    + getAverageEccentricity());
+		System.out.println("Center to centroid: " + getDistanceFromCenterToCentroid());
+		System.out.println("Average eccentricity: " + getAverageEccentricity());
 	}
 
 	
 	
-	public void printNode(int vertex) {
+	public void printNode(int vertex) 
+	{
 		nodes[vertex].print();
 	}
 	
-	public void printTree() {
+	public void printTree() 
+	{
 		for (Node n : bfsOrder) n.print();
 	}
 	
@@ -236,24 +292,30 @@ public class RootedTree {
 	//    this time, a bfs on the node structure is enough
 	// 5) Computes height, size and depth of every node.
 	
-	private void resetBfsOrdering() {
+	private void resetBfsOrdering() 
+	{
 		Queue<Node> stack = new LinkedList<Node>();
 		stack.offer(root);
 		bfsOrder.clear();
 		inverseBfsOrder.clear();
 		Node current;
-		while (!stack.isEmpty()) {
+		
+		while (!stack.isEmpty()) 
+		{
 			current = stack.poll();
-			for (Node son : current.sons) stack.offer(son);
+			
+			for (Node son : current.sons) 
+				stack.offer(son);
+			
 			bfsOrder.add(current);
 			inverseBfsOrder.add(current);
 		}
-		Collections.reverse(inverseBfsOrder);
-		
+		Collections.reverse(inverseBfsOrder);		
 	}
 	
 	
-	private void swapRootWith(Node son) {
+	private void swapRootWith(Node son) 
+	{
 		root.sons.remove(son);
 		root.setHeight();
 		son.height = Math.max(root.height + 1, son.height);
@@ -262,19 +324,24 @@ public class RootedTree {
 	}
 
 		
-	private boolean isUnbalanced() {
+	private boolean isUnbalanced() 
+	{
 		return root.height > root.secondMaxHeight() + 2;
 	}
 	
-	private void rerootTree() {
+	private void rerootTree() 
+	{
 		computeAllHeights();
+		
 		while (isUnbalanced()) 
 			swapRootWith(root.maxHeightSon());
+		
 		resetBfsOrdering();
 	}
 	
 	
-	private void createNode(Node nodes[], Arc arc) {
+	private void createNode(Node nodes[], Arc arc) 
+	{
 		int son = arc.getDest();
 		int father = arc.getSource();
 		nodes[son] = new Node(son);
@@ -282,14 +349,17 @@ public class RootedTree {
 	}	
 
 	
-	private void createTree(int root, ArrayList<Arc> sortedArcs) {
+	private void createTree(int root, ArrayList<Arc> sortedArcs) 
+	{
 		this.bfsOrder = new ArrayList<>(order);
 		this.inverseBfsOrder = new ArrayList<>(order);
 		nodes = new Node[order];
 		nodes[root] = new Node(root);
 
 		this.bfsOrder.add(nodes[root]);
-		for (Arc arc : sortedArcs) {
+		
+		for (Arc arc : sortedArcs) 
+		{
 			createNode(nodes,arc);	
 			this.bfsOrder.add(nodes[arc.getDest()]);
 		}
@@ -297,23 +367,7 @@ public class RootedTree {
 		inverseBfsOrder.addAll(bfsOrder);
 		Collections.reverse(inverseBfsOrder);
 		this.root = nodes[root];
-	}
-	
-			
-	public RootedTree(ArrayList<Edge> edges, int root) {
-		this.order = edges.size() + 1;
-		Graph graph = new Graph(order);
-		for (Edge e : edges) graph.addEdge(e);
-
-		createTree(root, BreadthFirstSearch.generateTree(graph, root));
-		
-		rerootTree();
-		computeAllHeights();
-		computeAllSizes();
-		computeAllDepths();
-	}
-	
-		
+	}		
 	
 	
 }
