@@ -20,7 +20,8 @@ public class Graph implements Iterable<Edge>
 	ArrayList<LinkedList<Arc>> outAdjacency; // Directed graph outcoming Arcs list
 	
 	// Check if the Node number passed as argument is present in the graph
-	public boolean isVertex(int index) {
+	public boolean isVertex(int index)
+	{
 		for(LinkedList Edge : adjacency)
 			return (Edge.contains(index));
 		
@@ -46,7 +47,9 @@ public class Graph implements Iterable<Edge>
 	}
 	
 	
-	public Graph(int upperBound) {
+	public Graph(int upperBound)
+	{
+		adjacency = makeList(upperBound); // which size ?
 		for(int i=0; i< upperBound; i++)
 			for (int j=0; j<upperBound; i++)
 			{
@@ -61,7 +64,9 @@ public class Graph implements Iterable<Edge>
 	    // à remplir
 	}
 	
-	public void addVertex(int indexVertex) {
+	public void addVertex(int indexVertex)
+	{
+		this.order += 1;
 	    // à remplir
 	}
 	
@@ -69,12 +74,16 @@ public class Graph implements Iterable<Edge>
 	    // à remplir
 	}	
 	
-	public void addArc(Arc arc) {
+	public void addArc(Arc arc)  // ???????????
+	{
+	    inAdjacency.get(inAdjacency.size()).add(arc);
+	    outAdjacency.get(outAdjacency.size()).add(arc);
 	    // à remplir
 	}
 	
-	public void addEdge(Edge e) {
-	    // à remplir
+	public void addEdge(Edge e)
+	{
+		adjacency.get(adjacency.size()).add(e);
 	}
 
 	@Override
@@ -83,7 +92,16 @@ public class Graph implements Iterable<Edge>
 		return null;
 	}
 
-	public Object outNeighbours(int sommet) {
+	public Object outNeighbours(int vertex) 
+	{
+//		ArrayList<Arc> list = new ArrayList<>();
+//		
+//		for(LinkedList Edges : adjacency)
+//		{
+//			for(Edge ed : Edges )
+//				if (ed.getSource()==vertex)
+//					list.add(ed.getDest());
+//		}
 		// TODO Auto-generated method stub
 		return null;
 	}

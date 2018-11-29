@@ -35,10 +35,14 @@ public class Labyrinth extends JPanel {
 	int brightnessSlope= 3; // 0 <= x <= 100
 	int minBrightness = 40; // 0 <= x <= 100
 	Color backgroundColor = Color.black;
-
 	BufferedImage img;
+	
+	Grid grid;
+	RootedTree tree;
+	ArrayList<Edge> edges;
 
-	private void recomputeDefaultValues() {
+	private void recomputeDefaultValues()
+	{
 		side =  2 * halfSide + 1;
 		vertexWidth = side - 2 * vertexMargin;
 		corridorWidth = side - 2 * corridorMargin;
@@ -46,53 +50,56 @@ public class Labyrinth extends JPanel {
 		vertexRadius = halfSide - vertexMargin;
 	}
 	
-	Grid grid;
-	RootedTree tree;
-	ArrayList<Edge> edges;
-	
-	public void setStyleBright() {
+	public void setStyleBright() 
+	{
 		colorGradientCycleLength = 150;
 		brightnessSlope = 0;
 		minBrightness = 100;
 		backgroundColor = Color.black;
 	}
 	
-	public void setStyleInverted() {
+	public void setStyleInverted() 
+	{
 		colorGradientCycleLength = 150;
 		brightnessSlope = 2;
 		minBrightness = 10;
 		backgroundColor = Color.gray;
 	}
 	
-	public void setStyleBalanced() {
+	public void setStyleBalanced() 
+	{
 		colorGradientCycleLength = 150;
 		brightnessSlope = 3;
 		minBrightness = 40;
 		backgroundColor = Color.black;
 	}
 	
-	public void setShapeBigNodes() {
+	public void setShapeBigNodes() 
+	{
 		halfSide = 10;
 		vertexMargin = 1;
 		corridorMargin = 5;
 		recomputeDefaultValues();
 	}
 	
-	public void setShapeSmoothSmallNodes() {
+	public void setShapeSmoothSmallNodes() 
+	{
 		halfSide = 5;
 		vertexMargin = 1;
 		corridorMargin = 1;
 		recomputeDefaultValues();
 	}
 	
-	public void setShapeSmallAndFull() {
+	public void setShapeSmallAndFull() 
+	{
 		halfSide = 5;
 		vertexMargin = 0;
 		corridorMargin = 0;
 		recomputeDefaultValues();
 	}
 	
-	public Labyrinth(Grid g, RootedTree tree) {
+	public Labyrinth(Grid g, RootedTree tree) 
+	{
 		this.grid = g;
 		this.tree = tree;
 		edges = new ArrayList<>();
@@ -105,11 +112,13 @@ public class Labyrinth extends JPanel {
 		);
 	}
 	
-	public void addEdge(Edge e) {
+	public void addEdge(Edge e) 
+	{
 		edges.add(e);
 	}
 
-	private Color getVertexColor(int vertex) {
+	private Color getVertexColor(int vertex) 
+	{
 		if (tree == null) return Color.white;
 		int depth = tree.getDepth(vertex);
 		int height = tree.getHeight(vertex) + 1;
@@ -138,7 +147,8 @@ public class Labyrinth extends JPanel {
 		g.fill(rect);
 	}
 	
-	private void drawHorizontalEdge(Graphics2D g, Edge e) {
+	private void drawHorizontalEdge(Graphics2D g, Edge e) 
+	{
 		int source = Math.min(e.source, e.dest);
 		int dest = Math.max(e.source,e.dest);
 		int xMin = side * grid.abscissaOfVertex(source) + corridorStartShift;
@@ -152,7 +162,8 @@ public class Labyrinth extends JPanel {
 		g.fill(rect);
 	}
 	
-	private void drawVertex(Graphics2D g, int vertex) {
+	private void drawVertex(Graphics2D g, int vertex) 
+	{
 		int xMin = side * grid.abscissaOfVertex(vertex) + vertexMargin;
 		int yMin = side * grid.ordinateOfVertex(vertex) + vertexMargin;
 		Shape ell = new Ellipse2D.Float(xMin,yMin,vertexWidth,vertexWidth); 
@@ -160,7 +171,8 @@ public class Labyrinth extends JPanel {
 		g.fill(ell);
 	}
 	
-	private void drawRoot(Graphics2D g, int vertex) {
+	private void drawRoot(Graphics2D g, int vertex) 
+	{
 		int i = grid.abscissaOfVertex(vertex);
 		int j = grid.ordinateOfVertex(vertex);
 		g.setColor(Color.white);
@@ -168,7 +180,8 @@ public class Labyrinth extends JPanel {
 		
 	}
 	
-	private void drawBackground(Graphics2D g) {
+	private void drawBackground(Graphics2D g) 
+	{
 		super.setBackground(backgroundColor);
 		super.paintComponent(g);		
 	}
@@ -177,34 +190,36 @@ public class Labyrinth extends JPanel {
 	
 	public void drawLabyrinth() {
 		Graphics2D g = img.createGraphics();
-		RenderingHints rh = new RenderingHints(
-						RenderingHints.KEY_ANTIALIASING, 
-						RenderingHints.VALUE_ANTIALIAS_ON
-						);
+		RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setRenderingHints(rh);
 		drawBackground(g);
 				
 		g.setColor(Color.white);
-		for (Edge e : edges) {
+		for (Edge e : edges) 
+		{
 			if (grid.isHorizontal(e)) drawHorizontalEdge(g,e);
 			else drawVerticalEdge(g,e);
 		}
-		for (int i = 0; i < grid.graph.order; i++) {
+		
+		for (int i = 0; i < grid.graph.order; i++)
 			drawVertex(g,i);
-		}		
-		if (tree != null) drawRoot(g,tree.getRoot());
+		
+		if (tree != null)
+			drawRoot(g,tree.getRoot());
 
 		g.dispose();
 		repaint();
 	}
 	
 	@Override
-	public void paintComponent(Graphics graphics) {
+	public void paintComponent(Graphics graphics)
+	{
 		Graphics2D g = (Graphics2D) graphics;
 		g.drawImage(img,0,0,null);		
 	}
 	
-	public void saveImage(String path) throws IOException {
+	public void saveImage(String path) throws IOException 
+	{
 		ImageIO.write((RenderedImage) img,"PNG", new File(path));
 	}
 	
