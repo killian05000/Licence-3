@@ -12,9 +12,7 @@ public class CompleteGraph
 			for (int j = i+1; j < order; j++)
 				graph.addEdge(new Edge(i,j,0));
 		
-	}
-	
-	
+	}	
 	
 	
 }

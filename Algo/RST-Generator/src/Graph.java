@@ -28,8 +28,8 @@ public class Graph implements Iterable<Edge>
 		for(LinkedList IncomingArc : inAdjacency)
 			return (IncomingArc.contains(index));
 		
-		for(LinkedList OutcomingArc : outAdjacency) // necessary?
-			return (OutcomingArc.contains(index));				
+//		for(LinkedList OutcomingArc : outAdjacency)
+//			return (OutcomingArc.contains(index));				
 			
 		return false;
 	}
