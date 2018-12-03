@@ -1,0 +1,4 @@
+To compile : 
+
+cc tp3ex1.c -pthread -o tp3ex1.exe
+cc tp3ex2.c -pthread -o tp3ex2.exe
