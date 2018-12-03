@@ -8,10 +8,13 @@
 volatile int theChar;
 volatile enum {READ,WRITE} job = READ;
 
+#define BUFFER_SIZE (10)
+char buffer[BUFFER_SIZE];
+int ptr_input = 0;
+int ptr_output = 0;
+
 sem_t NVide;
 sem_t NPlein;
-char tab[9];
-int count=0;
 
 /*************************************************************
 ** Producteur: Lire l'entrée standard et, pour chaque
@@ -26,8 +29,8 @@ void* read_stdin (void* argument) {
             //usleep(100);
         //}
         theChar = getchar();
-        tab[count] = theChar;
-        count++;
+        buffer[ptr_input] = theChar;
+        ptr_input++;
 
         sem_post(&NPlein);
         //job = WRITE;              /* donner le tour */
@@ -42,15 +45,17 @@ void* read_stdin (void* argument) {
 **************************************************************/
 
 void* write_to_stdout (void* name) {
-    unsigned long cpt = 0;
     while (true) {
         sem_wait(&NPlein);
         //while (job != WRITE) {         /* attendre */
             //cpt++;
-            usleep(100);
+            usleep(100000);
         //}
-        if (theChar == EOF) break;
-        printf("car=%c\n", tab[count-1]);
+        if (theChar == EOF)
+          break;
+
+        printf("car=%c\n", buffer[ptr_output]);
+        ptr_output++;
         sem_post(&NVide);
         //job = READ;                    /* donner le tour */
     }
@@ -60,7 +65,8 @@ void* write_to_stdout (void* name) {
 /*************************************************************
 ** Créer les threads et attendre leurs terminaisons.
 **************************************************************/
-int main (void) {
+int main (void)
+{
     pthread_t read_thread, write_thread;
 
     sem_init(&NVide, 0, 1);
@@ -70,6 +76,7 @@ int main (void) {
         perror("pthread_create");
         exit(EXIT_FAILURE);
     }
+
     if (pthread_create(&write_thread, NULL, read_stdin, NULL)) {
         perror("pthread_create");
         exit(EXIT_FAILURE);
@@ -85,6 +92,6 @@ int main (void) {
         exit(EXIT_FAILURE);
     }
 
-    printf("Fin du pere\n") ;
+    printf("Fin du pere\n");
     return (EXIT_SUCCESS);
 }
