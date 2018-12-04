@@ -19,6 +19,10 @@ char* colors_name[] = {"RED", "BLUE"};
 COLOR color = RED;
 int nbPainters = 0;
 
+int Ccolor=0;
+
+#define NB_PAINTERS  (3)
+
 /**********************************************************************
 ** Chaque peintre va récupérer un numéro unique et une couleur
 ** et peindre trois fois en alternant les couleurs.
@@ -35,20 +39,30 @@ void* painter (void* _unused) {
     pthread_mutex_unlock(&mutex);
 
     /* il y a trois zones à peindre */
-    for(i=0; (i < 3); i++) {
+    for(i=1; (i < 4); i++)
+    {
 
         /* il faut attendre pour alterner les couleurs */
         pthread_mutex_lock(&mutex);
-        while (color != my_color) {
-            /* je m'endors car la condition est fausse */
-            pthread_cond_wait(&condition, &mutex);
-        }
+          while (color != my_color)
+          {
+              /* je m'endors car la condition est fausse */
+              printf("color !⁼ my_color\n");
+              Ccolor++;
+              pthread_cond_wait(&condition, &mutex);
+          }
 
         printf("numéro=%d, couleur=%s\n", my_number, colors_name[my_color]);
+
         sleep(1);
 
         /* je passe a la couleur suivante */
-        color = ((color == RED) ? BLUE : RED);
+        if(Ccolor == 1 )
+        {
+          color = ((color == RED) ? BLUE : RED);
+          Ccolor--;
+        }
+
         pthread_cond_broadcast(&condition);
         pthread_mutex_unlock(&mutex);
     }
@@ -61,7 +75,7 @@ void* painter (void* _unused) {
 ** Initialiser les peintres et attendre la fin du travail.
 **********************************************************************/
 
-#define NB_PAINTERS  (4)
+
 
 int main (void) {
     pthread_t peintres[NB_PAINTERS];
