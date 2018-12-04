@@ -29,8 +29,11 @@ void* read_stdin (void* argument) {
             //usleep(100);
         //}
         theChar = getchar();
+        printf("ecris\n");
         buffer[ptr_input] = theChar;
         ptr_input++;
+
+        ptr_input = ptr_input%BUFFER_SIZE;
 
         sem_post(&NPlein);
         //job = WRITE;              /* donner le tour */
@@ -49,13 +52,15 @@ void* write_to_stdout (void* name) {
         sem_wait(&NPlein);
         //while (job != WRITE) {         /* attendre */
             //cpt++;
-            usleep(100000);
+            sleep(1);
         //}
         if (theChar == EOF)
           break;
 
-        printf("car=%c\n", buffer[ptr_output]);
+        printf("--> car=%c\n", buffer[ptr_output]);
         ptr_output++;
+
+        ptr_output = ptr_output%BUFFER_SIZE;
         sem_post(&NVide);
         //job = READ;                    /* donner le tour */
     }
@@ -69,7 +74,7 @@ int main (void)
 {
     pthread_t read_thread, write_thread;
 
-    sem_init(&NVide, 0, 1);
+    sem_init(&NVide, 0, BUFFER_SIZE);
     sem_init(&NPlein, 0, 0);
 
     if (pthread_create(&read_thread, NULL, write_to_stdout, NULL)) {
