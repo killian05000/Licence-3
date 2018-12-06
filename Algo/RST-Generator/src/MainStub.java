@@ -23,7 +23,8 @@ public class MainStub {
 		// Non-random BFS
 		ArrayList<Arc> randomArcTree = BreadthFirstSearch.generateTree(graph,0);
 		randomTree = new ArrayList<>();
-		for (Arc a : randomArcTree) randomTree.add(a.support);		
+		for (Arc a : randomArcTree) 
+			randomTree.add(a.support);		
 		
 		return randomTree;
 	}
@@ -64,9 +65,9 @@ public class MainStub {
 			
 			degrees = rooted.getDegreeDistribution(4);
 			
-			for (int j = 1; j < 5; j++) {
+			for (int j = 1; j < 5; j++) 
 				degreesSum[j] = degreesSum[j] + degrees[j];
-			}
+			
 		}		
 		
 		long delay = System.nanoTime() - startingTime;
@@ -109,11 +110,13 @@ public class MainStub {
 		window.setVisible(true);
 		
 		// Pour générer un fichier image.
-//		try {
-//			laby.saveImage("resources/random.png");
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
+		try 
+		{
+			laby.saveImage("resources/random.png");
+		} catch (IOException e1)
+		{
+			e1.printStackTrace();
+		}
 
 	}
 	
