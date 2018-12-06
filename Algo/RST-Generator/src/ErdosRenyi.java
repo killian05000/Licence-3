@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 
-public class ErdosRenyi // Simple Graphs
+public class ErdosRenyi // Simple Graph
 {
 
 	private final static Random gen = new Random();
