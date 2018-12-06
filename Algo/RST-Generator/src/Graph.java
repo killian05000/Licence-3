@@ -15,23 +15,20 @@ public class Graph implements Iterable<Edge>
 	int order;
 	int edgeCardinality;
 	
-	ArrayList<LinkedList<Edge>> adjacency; // Undirected graph Edges's list
-	ArrayList<LinkedList<Arc>> inAdjacency; // Directed graph incoming Arcs list
-	ArrayList<LinkedList<Arc>> outAdjacency; // Directed graph outcoming Arcs list
+	public ArrayList<LinkedList<Edge>> adjacency; // Undirected graph Edges's list
+	public ArrayList<LinkedList<Arc>> inAdjacency; // Directed graph incoming Arcs list
+	public ArrayList<LinkedList<Arc>> outAdjacency; // Directed graph outcoming Arcs list
 	
 	// Check if the Node number passed as argument is present in the graph
 	public boolean isVertex(int index)
 	{
-		for(LinkedList Edge : adjacency)
-			return (Edge.contains(index));
+//		for(LinkedList Edge : adjacency)
+//			return (Edge.contains(index));
+//		
+//		for(LinkedList IncomingArc : inAdjacency)
+//			return (IncomingArc.contains(index));
 		
-		for(LinkedList IncomingArc : inAdjacency)
-			return (IncomingArc.contains(index));
-		
-//		for(LinkedList OutcomingArc : outAdjacency)
-//			return (OutcomingArc.contains(index));				
-			
-		return false;
+		return index < adjacency.size() && index >=0 && adjacency.get(index) != null;
 	}
 	
 	// Create a List and set its values to null
@@ -49,41 +46,53 @@ public class Graph implements Iterable<Edge>
 	
 	public Graph(int upperBound)
 	{
-		adjacency = makeList(upperBound); // which size ?
-		for(int i=0; i< upperBound; i++)
-			for (int j=0; j<upperBound; i++)
-			{
-				if(adjacency.get(0).get(0).getSource()==i && adjacency.get(0).get(0).getDest()==j)
-					continue;
-				else
-				{
-					adjacency.get(0).get(0).setSource(i);
-					adjacency.get(0).get(0).setDest(j);
-				}					
-			}				
-	    // à remplir
+//		adjacency = makeList(upperBound); // which size ?
+//		for(int i=0; i< upperBound; i++)
+//			for (int j=0; j<upperBound; i++)
+//			{
+//				if(adjacency.get(0).get(0).getSource()==i && adjacency.get(0).get(0).getDest()==j)
+//					continue;
+//				else
+//				{
+//					adjacency.get(0).get(0).setSource(i);
+//					adjacency.get(0).get(0).setDest(j);
+//				}					
+//			}				
+		order = upperBound;
+		adjacency = makeList(upperBound);
+		inAdjacency = makeList(upperBound);
+		outAdjacency = makeList(upperBound);
 	}
 	
 	public void addVertex(int indexVertex)
 	{
-		this.order += 1;
-	    // à remplir
+		ensureVertex(indexVertex);
 	}
 	
-	public void ensureVertex(int indexVertex) {
-	    // à remplir
-	}	
+	public void ensureVertex(int indexVertex) 
+	{
+	    if(!isVertex(indexVertex))
+	    {
+	    	this.order += 1;
+			adjacency.ensureCapacity(adjacency.size()+1);
+			inAdjacency.ensureCapacity(inAdjacency.size()+1);
+			outAdjacency.ensureCapacity(outAdjacency.size()+1);
+			adjacency.set(indexVertex, new LinkedList<Edge>());
+			inAdjacency.set(indexVertex, new LinkedList<Arc>());
+			outAdjacency.set(indexVertex, new LinkedList<Arc>());
+	    }
+	}
 	
 	public void addArc(Arc arc)  // ???????????
 	{
-	    inAdjacency.get(inAdjacency.size()).add(arc);
-	    outAdjacency.get(outAdjacency.size()).add(arc);
-	    // à remplir
+		inAdjacency.get(arc.getDest()).add(arc);
+	    outAdjacency.get(arc.getSource()).add(arc);
 	}
 	
 	public void addEdge(Edge e)
 	{
-		adjacency.get(adjacency.size()).add(e);
+		adjacency.get(e.getSource()).add(e);
+		adjacency.get(e.getDest()).add(e);
 	}
 
 	@Override
@@ -92,17 +101,14 @@ public class Graph implements Iterable<Edge>
 		return null;
 	}
 
-	public Object outNeighbours(int vertex) 
+	public LinkedList<Arc> outNeighbours(int vertex) 
 	{
-		ArrayList<Arc> list = new ArrayList<>();
-//		
-//		for(LinkedList Edges : adjacency)
-//		{
-//			for(Edge ed : Edges )
-//				if (ed.getSource()==vertex)
-//					list.add(ed.getDest());
-//		}
-		// TODO Auto-generated method stub
+//		LinkedList<Edge> edgeList = new LinkedList<>();		
+//		edgeList = adjacency.get(vertex);
+		
+		LinkedList<Arc> list = new LinkedList<>();
+		list = outAdjacency.get(vertex);
+
 		return list;
 	}
 	
