@@ -38,6 +38,11 @@ public class Edge implements Comparable<Edge> {
 		return this.dest;
 	}
 	
+	public double getWeight()
+	{
+		return this.weight;
+	}
+	
 	public void setSource(int _source)
 	{
 		this.source = _source;
