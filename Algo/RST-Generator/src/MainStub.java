@@ -1,5 +1,6 @@
 package src;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,8 +33,12 @@ public class MainStub {
 	
 	public static void main(String argv[]) throws InterruptedException
 	{
+		Dimension dimension = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+		int height = (int)dimension.getHeight();
+		int width  = (int)dimension.getWidth();
+		
 		Grid grid = null;
-		grid = new Grid(1920/11,1080/11);
+		grid = new Grid(width/11,height/11);
 		Graph graph = grid.graph;
 		
 //		Graph graph = new Complete(400).graph;
@@ -110,13 +115,13 @@ public class MainStub {
 		window.setVisible(true);
 		
 		// Pour générer un fichier image.
-		try 
-		{
-			laby.saveImage("resources/random.png");
-		} catch (IOException e1)
-		{
-			e1.printStackTrace();
-		}
+//		try 
+//		{
+//			laby.saveImage("resources/random.png");
+//		} catch (IOException e1)
+//		{
+//			e1.printStackTrace();
+//		}
 
 	}
 	

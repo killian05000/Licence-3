@@ -58,7 +58,7 @@ public class Graph implements Iterable<Edge>
 //					adjacency.get(0).get(0).setDest(j);
 //				}					
 //			}				
-		order = upperBound;
+		order = 0;
 		adjacency = makeList(upperBound);
 		inAdjacency = makeList(upperBound);
 		outAdjacency = makeList(upperBound);
@@ -91,8 +91,13 @@ public class Graph implements Iterable<Edge>
 	
 	public void addEdge(Edge e)
 	{
+		addVertex(e.getSource());
+		addVertex(e.getDest());
 		adjacency.get(e.getSource()).add(e);
 		adjacency.get(e.getDest()).add(e);
+		addArc(new Arc(e, false));
+		addArc(new Arc(e, true));
+		
 	}
 
 	@Override
