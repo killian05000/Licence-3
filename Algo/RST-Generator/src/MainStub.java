@@ -22,7 +22,13 @@ public class MainStub {
 		// TOOO : modifier l'algorithme utiliser ici.
 		
 		// Non-random BFS
-		ArrayList<Arc> randomArcTree = BreadthFirstSearch.generateTree(graph,0);
+		//ArrayList<Arc> randomArcTree = BreadthFirstSearch.generateTree(graph,0);
+		//System.out.println("TEST : "+randomArcTree.size());
+		
+		// Prim
+		ArrayList<Arc> randomArcTree = Prim.generateTree(graph, 0);
+		
+		
 		randomTree = new ArrayList<>();
 		for (Arc a : randomArcTree) 
 			randomTree.add(a.support);		
@@ -38,7 +44,8 @@ public class MainStub {
 		int width  = (int)dimension.getWidth();
 		
 		Grid grid = null;
-		grid = new Grid(width/11,height/11);
+		//grid = new Grid(width/11,height/11);
+		grid = new Grid(10,10);
 		Graph graph = grid.graph;
 		
 //		Graph graph = new Complete(400).graph;
@@ -83,7 +90,8 @@ public class MainStub {
 		System.out.println("Average diameter: " + (diameterSum / nbrOfSamples));
 		System.out.println("Average number of leaves: "+ (degreesSum[1] / nbrOfSamples));
 		System.out.println("Average number of degree 2 vertices: "+ (degreesSum[2] / nbrOfSamples));
-		System.out.println("Average computation time: " + delay / (nbrOfSamples * 1_000_000) + "ms");		
+		System.out.println("Average computation time: " + delay / (nbrOfSamples * 1_000_000) + "ms");
+		//System.out.println("Rand : "+(double)(int)(Math.random() *2));
 		
 		if (grid != null) showGrid(grid,rooted,randomTree);
 	}
