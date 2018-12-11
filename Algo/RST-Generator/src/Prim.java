@@ -8,6 +8,7 @@ public class Prim
 	ArrayList<Edge> Tree;
 	ArrayList<Integer> connectedVertices;
 	int maxWeight=2;
+	int counter=0;
 	
 	public Prim(Graph g)
 	{
@@ -43,7 +44,8 @@ public class Prim
 			{
 				for(Edge e : graph.adjacency.get(vertex))
 				{
-					if(!Tree.contains(e) || connectedVertices.contains(e.getDest()) || e.getWeight()>=minWeight) 
+					counter++;
+					if(Tree.contains(e) || connectedVertices.contains(e.getDest()) || e.getWeight()>=minWeight) 
 						continue;
 				 
 					// If an edge got a inferior weight, we store its destination				
@@ -70,12 +72,29 @@ public class Prim
 		return arcTree;
 	}
 	
-	public static ArrayList<Arc> generateTree(Graph g, int root)
+	public static ArrayList<Edge> generateTree(Graph g, int root)
 	{
 		Prim algo = new Prim(g);
 		algo.getMST(root);
-		ArrayList<Arc> arcTree = algo.convertEdgeToArc();
-		return arcTree;		
+		
+		//ArrayList<Arc> arcTree = algo.convertEdgeToArc();
+		
+//		for(int k=0; k<algo.graph.order;k++)
+//		{
+//			for(Edge e : algo.graph.adjacency.get(k))
+//				System.out.print(e.getWeight()+" ");
+//			System.out.println();
+//		}
+		
+//		for(Edge e : algo.Tree)
+//			System.out.println(e.getWeight());
+		
+		System.out.println("tree size graph : " + algo.Tree.size());		
+		System.out.println("Order graph : " + algo.graph.order);		
+		System.out.println("Size adjency graph : " + algo.graph.adjacency.size());
+		System.out.println("Nb Iterations : "+algo.counter);
+		
+		return algo.Tree;		
 	}
 
 }
