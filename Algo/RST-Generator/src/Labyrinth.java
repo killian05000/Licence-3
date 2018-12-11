@@ -203,7 +203,6 @@ public class Labyrinth extends JPanel {
 		
 		for (int i = 0; i < grid.graph.order; i++)
 		{
-			System.out.println("Test : "+i);
 			drawVertex(g,i);
 		}
 		
