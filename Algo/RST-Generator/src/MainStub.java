@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -17,7 +16,7 @@ public class MainStub {
 	
 	public static ArrayList<Edge> genTree(Graph graph) 
 	{
-		ArrayList<Edge> randomTree;
+		//ArrayList<Edge> randomTree;
 		
 		// TOOO : modifier l'algorithme utiliser ici.
 		
@@ -26,14 +25,14 @@ public class MainStub {
 		//System.out.println("TEST : "+randomArcTree.size());
 		
 		// Prim
-		ArrayList<Arc> randomArcTree = Prim.generateTree(graph, 0);
+		ArrayList<Edge> randomArcTree = Prim.generateTree(graph, 0);
 		
 		
-		randomTree = new ArrayList<>();
-		for (Arc a : randomArcTree) 
-			randomTree.add(a.support);		
+//		randomTree = new ArrayList<>();
+//		for (Arc a : randomArcTree) 
+//			randomTree.add(a.support);		
 		
-		return randomTree;
+		return randomArcTree;
 	}
 	
 	
@@ -54,7 +53,7 @@ public class MainStub {
 
 //		Graph graph = new Lollipop(1_000).graph;
 		
-		int nbrOfSamples = 10;
+		int nbrOfSamples = 1;
 		int diameterSum = 0;
 		double eccentricitySum = 0;
 		long wienerSum = 0;
@@ -67,6 +66,7 @@ public class MainStub {
 		long startingTime = System.nanoTime();
 		for (int i = 0; i < nbrOfSamples; i++)
 		{
+			System.out.println("Sample n°"+i);
 			randomTree= genTree(graph);
 
 			rooted = new RootedTree(randomTree,0);
@@ -80,6 +80,7 @@ public class MainStub {
 			for (int j = 1; j < 5; j++) 
 				degreesSum[j] = degreesSum[j] + degrees[j];
 			
+			System.out.println("Sample number : "+i);			
 		}		
 		
 		long delay = System.nanoTime() - startingTime;
