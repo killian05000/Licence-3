@@ -46,7 +46,7 @@ public class BreadthFirstSearch
 	}
 	
 	public static ArrayList<Arc> generateTree(Graph graph, int root)
-	{ 
+	{
 		BreadthFirstSearch algo = new BreadthFirstSearch(graph);
 		algo.bfs(root);
 		return algo.tree;
