@@ -5,9 +5,9 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
-/*******************************************
- **Code from a student (Baptiste Busnoult)**
- *******************************************/
+/***********************
+ **Code from a student**
+ ***********************/
 
 public class BreadthFirstSearch
 {
