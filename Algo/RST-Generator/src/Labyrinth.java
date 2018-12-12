@@ -120,6 +120,7 @@ public class Labyrinth extends JPanel {
 	private Color getVertexColor(int vertex) 
 	{
 		if (tree == null) return Color.white;
+		//System.out.println("Test : "+vertex);
 		int depth = tree.getDepth(vertex);
 		int height = tree.getHeight(vertex) + 1;
 		float hue = (float) 
