@@ -25,8 +25,13 @@ public class MainStub {
 		//System.out.println("TEST : "+randomArcTree.size());
 		
 		// Prim
-		ArrayList<Edge> randomArcTree = Prim.generateTree(graph, 0);
+		//ArrayList<Edge> randomArcTree = Prim.generateTree(graph, 0);
 		
+		//drunkButSmart
+		//ArrayList<Edge> randomArcTree = drunkButSmart.generateTree(graph, 0);
+		
+		//AldousBorder
+		ArrayList<Edge> randomArcTree = AldousBroder.generateTree(graph, 0);
 		
 //		randomTree = new ArrayList<>();
 //		for (Arc a : randomArcTree) 
@@ -43,9 +48,10 @@ public class MainStub {
 		int width  = (int)dimension.getWidth();
 		
 		Grid grid = null;
-		//grid = new Grid(width/11,height/11);
-		grid = new Grid(10,10);
+		grid = new Grid(width/11,height/11);
+		//grid = new Grid(10,10);
 		Graph graph = grid.graph;
+		System.out.println("Graph size : "+graph.order);
 		
 //		Graph graph = new Complete(400).graph;
 		
