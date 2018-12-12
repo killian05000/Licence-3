@@ -12,54 +12,24 @@ public class AldousBroder
 	
 	public void genRandTree(int root)
 	{
-		LinkedList<Integer> stash = new LinkedList<>();
+		//LinkedList<Integer> stash = new LinkedList<>();
 		boolean treeComplete=false;
 		
 		int currentVertex = root;
-		//vertexConnected.add(root);
+		vertexConnected.add(root);
 		while(!treeComplete)
 		{
-			//System.out.println("CURRENT VERTEX : "+currentVertex);
-			
-			while(vertexIsFullyConnected(currentVertex))
-			{
-//				if(stash.isEmpty())
-//				{
-//					System.out.println("--STASH EMPTY--");
-//					break;
-//				}
-				
-				int n = (int)(Math.random() *vertexConnected.size());				
-				currentVertex=vertexConnected.get(n);
-				
-				//System.out.println("VERTEX CHANGED ! ["+currentVertex+"]");			
-			}
-			
-			//System.out.println("CURRENT VERTEX AFTER VFC CHECK : "+currentVertex);
-			
+			//System.out.println("CURRENT VERTEX : "+currentVertex);			
 			int n = (int)(Math.random() *graph.adjacency.get(currentVertex).size());
-			int destV = graph.adjacency.get(currentVertex).get(n).getDest(); 
+			int destV = graph.outAdjacency.get(currentVertex).get(n).getDest(); 
 			//System.out.println("NEXT VERTEX : "+destV);		
-
-			for(Edge e : graph.adjacency.get(currentVertex))
-			{					
-				if(e.getDest()==destV || stash.contains(e.getDest()) || vertexConnected.contains(e.getDest()))
-					continue;
-				
-				stash.add(e.getDest()); 
-			}			
-
 			
-			if(!Tree.contains(graph.adjacency.get(currentVertex).get(n)))
+			if(!vertexConnected.contains(destV))
 			{
+				vertexConnected.add(destV);
 				Tree.add(graph.adjacency.get(currentVertex).get(n));
-				//System.out.println("Tree Edge : ["+graph.adjacency.get(currentVertex).get(n).getSource()+" -> "+graph.adjacency.get(currentVertex).get(n).getDest()+"]");
-			}
-			
-			if(!vertexConnected.contains(currentVertex))
-			{
-				vertexConnected.add(currentVertex);
 				//System.out.println("Vertex "+currentVertex+" connected");
+				//System.out.println("Tree Edge : ["+graph.adjacency.get(currentVertex).get(n).getSource()+" -> "+graph.adjacency.get(currentVertex).get(n).getDest()+"]");
 				progressBar = (double)vertexConnected.size()/graph.order;
 				progressBar=progressBar*10000;
 				progressBar=(int)progressBar;
