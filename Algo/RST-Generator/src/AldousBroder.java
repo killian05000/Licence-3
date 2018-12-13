@@ -30,10 +30,10 @@ public class AldousBroder
 				Tree.add(graph.adjacency.get(currentVertex).get(n));
 				//System.out.println("Vertex "+currentVertex+" connected");
 				//System.out.println("Tree Edge : ["+graph.adjacency.get(currentVertex).get(n).getSource()+" -> "+graph.adjacency.get(currentVertex).get(n).getDest()+"]");
-				progressBar = (double)vertexConnected.size()/graph.order;
-				progressBar=progressBar*10000;
-				progressBar=(int)progressBar;
-				System.out.println("Creating Tree ["+progressBar/100+"%]");
+//				progressBar = (double)vertexConnected.size()/graph.order;
+//				progressBar=progressBar*10000;
+//				progressBar=(int)progressBar;
+//				System.out.println("Creating Tree ["+progressBar/100+"%]");
 			}
 			
 			currentVertex=destV;		
@@ -66,11 +66,6 @@ public class AldousBroder
 	{
 		AldousBroder algo = new AldousBroder(g);
 		algo.genRandTree(root);
-		
-		System.out.println("tree size graph : " + algo.Tree.size());		
-		System.out.println("Order graph : " + algo.graph.order);		
-		System.out.println("Size adjency graph : " + algo.graph.adjacency.size());
-		System.out.println("Number of connected Vertices : "+algo.vertexConnected.size());
 
 		return algo.Tree;
 	}

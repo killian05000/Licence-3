@@ -9,6 +9,7 @@ public class Prim
 	ArrayList<Integer> connectedVertices;
 	int maxWeight=2;
 	int counter=0;
+	double progressBar;
 	
 	public Prim(Graph g)
 	{

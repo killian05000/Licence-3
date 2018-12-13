@@ -16,28 +16,27 @@ public class MainStub {
 	
 	public static ArrayList<Edge> genTree(Graph graph) 
 	{
-		//ArrayList<Edge> randomTree;
+		ArrayList<Edge> randomTree;
 		
 		// TOOO : modifier l'algorithme utiliser ici.
 		
-		// Non-random BFS
-		//ArrayList<Arc> randomArcTree = BreadthFirstSearch.generateTree(graph,0);
-		//System.out.println("TEST : "+randomArcTree.size());
+//		//Breadth First Search
+		ArrayList<Arc> randomArcTree = BreadthFirstSearch.generateTree(graph,0);
+		randomTree = new ArrayList<>();
+		for (Arc a : randomArcTree)
+			randomTree.add(a.support);
 		
-		// Prim
-		//ArrayList<Edge> randomArcTree = Prim.generateTree(graph, 0);
-		
-		//drunkButSmart
-		//ArrayList<Edge> randomArcTree = drunkButSmart.generateTree(graph, 0);
+		//Prim (Only work with a small graph -> O(n² * n)
+		//randomTree = Prim.generateTree(graph, 0);
 		
 		//AldousBorder
-		ArrayList<Edge> randomArcTree = AldousBroder.generateTree(graph, 0);
+		//randomTree = AldousBroder.generateTree(graph, 0);
 		
-//		randomTree = new ArrayList<>();
-//		for (Arc a : randomArcTree) 
-//			randomTree.add(a.support);		
+		//drunkWizard
+		//randomTree = drunkWizard.generateTree(graph,  0);
+		 					
 		
-		return randomArcTree;
+		return randomTree;
 	}
 	
 	
@@ -53,7 +52,7 @@ public class MainStub {
 		Graph graph = grid.graph;
 		System.out.println("Graph size : "+graph.order);
 		
-//		Graph graph = new Complete(400).graph;
+//		Graph graph = new CompleteGraph(50).graph;
 		
 //		Graph graph = new ErdosRenyi(1_000, 100).graph;
 
@@ -84,9 +83,7 @@ public class MainStub {
 			degrees = rooted.getDegreeDistribution(4);
 			
 			for (int j = 1; j < 5; j++) 
-				degreesSum[j] = degreesSum[j] + degrees[j];
-			
-			System.out.println("Sample number : "+i);			
+				degreesSum[j] = degreesSum[j] + degrees[j];			
 		}		
 		
 		long delay = System.nanoTime() - startingTime;
