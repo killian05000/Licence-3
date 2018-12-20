@@ -129,5 +129,14 @@ void create_empty_directory () {
  ************************************************************/
 
 void list_directory (void) {
-    list_directory_impl();
+    unsigned j;
+
+    for(j = 0; j < DIR_SIZE; j++)
+    {
+        if (directory.files[j].adr_inode > 0)
+        {
+                printf("\n name : %s \n",directory.files[j].name);
+                printf("size : %i \n",read_inode(directory.files[j].adr_inode).size);
+        }
+    }
 }

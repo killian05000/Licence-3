@@ -12,19 +12,19 @@
 int main() {
     OFILE* file;
     int c;
-    
+
     init_sgf();
-    
+
     printf("\nLISTE DES FICHIERS\n\n");
     list_directory();
-    
-    printf("\nCONTENU DE essai.txt\n\n");
+
+    printf("\nCONTENU DE essai.txt :\n\n");
     file = sgf_open_read("essai.txt");
     while ((c = sgf_getc(file)) > 0) {
+        /*sgf_seek(file, file->ptr+1);*/
         putchar(c);
     }
     sgf_close(file);
-    
+
     return (EXIT_SUCCESS);
 }
-

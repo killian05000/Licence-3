@@ -10,7 +10,7 @@
  disque. Les fonctions ci-dessous permettent la lecture et
  l'écriture synchrone d'un bloc.
  ************************************************************/
- 
+
 #define BLOCK_SIZE              (128)    /* 128 octets */
 
 typedef char BLOCK[ BLOCK_SIZE ];
@@ -86,7 +86,7 @@ void set_fat (int n, int value);
 
 /* créer une FAT vide */
 void create_empty_fat (void);
- 
+
 
 /************************************************************
  DÉFINITION DU RÉPERTOIRE
@@ -178,13 +178,16 @@ void sgf_close(OFILE* f);
 /* initialisation */
 void init_sgf (void);
 
+/* deplacement du pointeur */
+int sgf_seek(OFILE* f, int pos);
+
 
 /************************************************************
  *
  *  FONCTIONS UTILITAIRES
  *
  ***********************************************************/
- 
+
 /* afficher un message et stopper */
 void panic (const char *format, ...);
 

@@ -28,9 +28,9 @@ void init_sgf(void) {
 
 
 /************************************************************
- Lire un caractère dans un fichier ouvert. Cette fonction 
+ Lire un caractère dans un fichier ouvert. Cette fonction
  renvoie -1 si elle trouve la fin du fichier.
- 
+
  Description :
    - si la fin du fichier est atteinte (comparaison entre ptr
      et la taille), renvoyer -1
@@ -41,14 +41,23 @@ void init_sgf(void) {
  ************************************************************/
 
 int sgf_getc(OFILE* file) {
-    return sgf_getc_impl(file);
+
+    if(file->ptr == file->inode.size)
+      return -1;
+
+    if(file->ptr%BLOCK_SIZE==0)
+      sgf_read_block(file, file->ptr/BLOCK_SIZE);
+
+    file->ptr++;
+
+    return(file->buffer[(file->ptr-1)%BLOCK_SIZE]);
 }
 
 
 /************************************************************
- Lire dans le "buffer" le bloc logique "block_number" 
+ Lire dans le "buffer" le bloc logique "block_number"
  dans le fichier ouvert "file".
- 
+
  Description :
    - il faut calculer l'adresse du bloc physique qui contient
      le bloc logique de numéro "block_number"
@@ -56,18 +65,24 @@ int sgf_getc(OFILE* file) {
      du premier bloc disponible dans l'INODE) et parcourir
      le chainage de la FAT block_number fois.
    - une fois l'adresse trouvée, il faut lire le bloc
-     dans le buffer 
+     dans le buffer
  ************************************************************/
 
 void sgf_read_block(OFILE* file, int block_number) {
-    sgf_read_block_impl(file, block_number);
+
+    int i;
+    int currentBlock = file->inode.first;
+    for(i=0; i<block_number; i++)
+      currentBlock = get_fat(currentBlock);
+
+    read_block(currentBlock, &file->buffer);
 }
 
 
 /************************************************************
- Ajouter le bloc contenu dans le tampon au fichier 
+ Ajouter le bloc contenu dans le tampon au fichier
  ouvert décrit par "file".
- 
+
  Description :
  - allouer un bloc libre (fonction alloc_block)
  - écrire le buffer dans ce bloc
@@ -91,7 +106,7 @@ void sgf_append_block(OFILE* file) {
 /************************************************************
  Ecrire le caractère "c" dans le fichier ouvert
  décrit par "file".
- 
+
  Description :
  - il y a toujours de la place dans le buffer (postulat)
  - placer le caractère dans le buffer (en fonction de ptr)
@@ -105,13 +120,13 @@ void sgf_putc(OFILE* file, char  c) {
 
 
 /************************************************************
- Écrire la chaîne de caractère "s" dans un fichier ouvert 
+ Écrire la chaîne de caractère "s" dans un fichier ouvert
  en écriture décrit par "file".
  ************************************************************/
 
 void sgf_puts(OFILE* file, char* s) {
     assert (file->mode == WRITE_MODE);
-    
+
     for (; (*s != '\0'); s++) {
         sgf_putc(file, *s);
     }
@@ -120,7 +135,7 @@ void sgf_puts(OFILE* file, char* s) {
 
 /************************************************************
  Détruire un fichier.
- 
+
  Description :
  - lire l'INODE et le libérer (FAT_FREE dans la FAT)
  - parcours le chaînage et libérer tous les blocs
@@ -162,11 +177,11 @@ OFILE*  sgf_open_write(const char* nom) {
     /* Allouer une structure OFILE */
     file = malloc(sizeof(OFILE));
     if (file == NULL) return (NULL);
-    
+
     /* mettre à jour le répertoire */
     oldinode = add_inode(nom, adr_inode);
     if (oldinode > 0) sgf_remove(oldinode);
-    
+
     file->inode     = inode;
     file->adr_inode = adr_inode;
     file->mode      = WRITE_MODE;
@@ -184,23 +199,23 @@ OFILE*  sgf_open_read(const char* nom) {
     int adr_inode;
     INODE inode;
     OFILE* file;
-    
+
     /* Chercher le fichier dans le répertoire */
     adr_inode = find_inode(nom);
     if (adr_inode < 0) return (NULL);
-    
+
     /* lire l'INODE */
     inode = read_inode(adr_inode);
-    
+
     /* Allouer une structure OFILE */
     file = malloc(sizeof(OFILE));
     if (file == NULL) return (NULL);
-    
+
     file->inode     = inode;
     file->adr_inode = adr_inode;
     file->mode      = READ_MODE;
     file->ptr       = 0;
-    
+
     return (file);
 }
 
@@ -216,4 +231,23 @@ OFILE*  sgf_open_read(const char* nom) {
 
 void sgf_close(OFILE* file) {
     sgf_close_impl(file);
+}
+
+int sgf_seek(OFILE* f, int pos)
+{
+  if(pos>f->inode.size)
+    return -1;
+
+  int previousPos=f->ptr;
+  f->ptr=pos;
+
+  if(pos%BLOCK_SIZE!=0)
+  {
+    sgf_read_block(f, f->ptr/BLOCK_SIZE);
+  }
+
+  if(pos/BLOCK_SIZE != previousPos/BLOCK_SIZE)
+    sgf_read_block(f, f->ptr/BLOCK_SIZE);
+
+  return 0;
 }
