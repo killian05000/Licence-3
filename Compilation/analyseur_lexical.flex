@@ -12,37 +12,41 @@
 
 /* Déclarations à compléter ... */
 
-POINT_VIRGULE                  ;
-PLUS                           +
-MOINS                          -
-FOIS                           *
-DIVISE                         /
-PARENTHESE_OUVRANTE            (
-PARENTHESE_FERMANTE            )
-CROCHET_OUVRANT                [
-CROCHET_FERMANT                ]
-ACCOLADE_OUVRANTE              {
-ACCOLADE_FERMANTE              }
-EGAL                           =
-INFERIEUR                      <
-ET                             &
-OU                             |
-NON                            !
-SI                             si
-ALORS                          alors
-SINON                          sinon
-TANTQUE                        tantque
-FAIRE                          faire
-ENTIER                         entier
-RETOUR                         retour
-LIRE                           lire
-ECRIRE                         ecrire
-IDENTIF                        [a-zA-Z]+
-NOMBRE                         [0-9]+
-VIRGULE                        ,
+lettre                         [a-zA-Z]
+chiffre                        [0-9]
+nombre                         [0-9][0-9]*
+alphanum                       {lettre}|{chiffre}
 
 %%
 
+";"                    {return POINT_VIRGULE;}
+"+"                    {return PLUS;}
+"-"                    {return MOINS;}
+"*"                    {return FOIS;}
+"/"                    {return DIVISE;}
+"("                    {return PARENTHESE_OUVRANTE;}
+")"                    {return PARENTHESE_FERMANTE;}
+"["                    {return CROCHET_OUVRANT;}
+"]"                    {return CROCHET_FERMANT;}
+"{"                    {return ACCOLADE_OUVRANTE;}
+"}"                    {return ACCOLADE_FERMANTE;}
+"="                    {return EGAL;}
+"<"                    {return INFERIEUR;}
+"&"                    {return ET;}
+"|"                    {return OU;}
+"!"                    {return NON;}
+","                    {return VIRGULE;}
+"si"                   {return SI;}
+"alors"                {return ALORS;}
+"sinon"                {return SINON;}
+"tantque"             {return TANTQUE;}
+"faire"                {return FAIRE;}
+"entier"               {return ENTIER;}
+"retour"               {return RETOUR;}
+"lire"                 {return LIRE;}
+"ecrire"               {return ECRIRE;}
+{nombre}               {return NOMBRE;}
+{lettre}{alphanum}*    {return IDENTIF;}
 
 %%
 
