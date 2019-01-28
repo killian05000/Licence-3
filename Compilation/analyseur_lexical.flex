@@ -1,6 +1,6 @@
 /*
  * Analyseur lexical du compilateur L en FLEX
- */ 
+ */
 %{
 /* code copié AU DÉBUT de l'analyseur */
 
@@ -11,24 +11,50 @@
 %option noinput
 
 /* Déclarations à compléter ... */
-                    
-                    
-                    
+
+POINT_VIRGULE                  ;
+PLUS                           +
+MOINS                          -
+FOIS                           *
+DIVISE                         /
+PARENTHESE_OUVRANTE            (
+PARENTHESE_FERMANTE            )
+CROCHET_OUVRANT                [
+CROCHET_FERMANT                ]
+ACCOLADE_OUVRANTE              {
+ACCOLADE_FERMANTE              }
+EGAL                           =
+INFERIEUR                      <
+ET                             &
+OU                             |
+NON                            !
+SI                             si
+ALORS                          alors
+SINON                          sinon
+TANTQUE                        tantque
+FAIRE                          faire
+ENTIER                         entier
+RETOUR                         retour
+LIRE                           lire
+ECRIRE                         ecrire
+IDENTIF                        [a-zA-Z]+
+NOMBRE                         [0-9]+
+VIRGULE                        ,
+
 %%
 
 
-
 %%
 
-/* Code copié À LA FIN de l'analyseyur */
+/* Code copié À LA FIN de l'analyseur */
 
 int yywrap(){
   return 1;
 }
 
 /***********************************************************************
- * Fonction auxiliaire appelée par l'analyseur syntaxique pour 
- * afficher des messages d'erreur et l'arbre XML 
+ * Fonction auxiliaire appelée par l'analyseur syntaxique pour
+ * afficher des messages d'erreur et l'arbre XML
  **********************************************************************/
 
 char *tableMotsClefs[] = {"si", "alors", "sinon", "tantque", "faire", "entier", "retour", "lire", "ecrire"};
@@ -36,7 +62,7 @@ int codeMotClefs[] = {SI, ALORS, SINON, TANTQUE, FAIRE, ENTIER, RETOUR, LIRE, EC
 int nbMotsClefs = 9;
 
 void nom_token( int token, char *nom, char *valeur ) {
-  int i;    
+  int i;
   strcpy( nom, "symbole" );
   if(token == POINT_VIRGULE) strcpy( valeur, "POINT_VIRGULE");
   else if(token == PLUS) strcpy(valeur, "PLUS");
@@ -53,15 +79,15 @@ void nom_token( int token, char *nom, char *valeur ) {
   else if(token == INFERIEUR) strcpy(valeur, "INFERIEUR");
   else if(token == ET) strcpy(valeur, "ET");
   else if(token == OU) strcpy(valeur, "OU");
-  else if(token == NON) strcpy(valeur, "NON");   
-  else if(token == VIRGULE) strcpy(valeur, "VIRGULE"); 
+  else if(token == NON) strcpy(valeur, "NON");
+  else if(token == VIRGULE) strcpy(valeur, "VIRGULE");
   else if( token == IDENTIF ) {
-    strcpy( nom, "identificateur" );    
-    strcpy( valeur, yytext );    
+    strcpy( nom, "identificateur" );
+    strcpy( valeur, yytext );
   }
   else if( token == NOMBRE ) {
     strcpy( nom, "nombre" );
-    strcpy( valeur, yytext ); 
+    strcpy( valeur, yytext );
   }
   else {
     strcpy(nom, "mot_clef");
@@ -71,6 +97,5 @@ void nom_token( int token, char *nom, char *valeur ) {
         break;
       }
     }
-  }  
+  }
 }
-
