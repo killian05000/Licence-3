@@ -48,7 +48,7 @@ alphanum               {lettre}|{chiffre}
 {nombre}               {return NOMBRE;}
 {lettre}{alphanum}*    {return IDENTIF;}
 #.*                    {}
-\n                     {yylineo++;}
+\n                     {yylineno++;}
 
 %%
 

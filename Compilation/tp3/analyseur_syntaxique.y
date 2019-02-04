@@ -50,19 +50,101 @@ int yyerror(char *s); // declare ci-dessous
 
 //function
 %token lire
-%tokenECRIRE
-
-
+%token ECRIRE
 %token RETOUR
 
-//...
-//TODO: compléter avec la liste des terminaux
 
 %start programme
 %%
 
-programme : ;
-//TODO: compléter avec les productions de la grammaire
+//Grammaire des expressions arithmétiques
+
+expression : expression OU et
+|            et
+;
+
+et : et ET egalite
+|   egalite
+;
+
+egalite : egalite EGAL plusmoins
+|         egalite INFERIEUR plusmoins
+|         plusmoins
+;
+
+plusmoins : plusmoins PLUS multidiv
+|           plusmoins MOINS multidiv
+|           multidiv
+;
+
+multidiv : multidiv FOIS negation
+|          multidiv DIVISE negation
+|          negation
+;
+
+negation : NON negation
+|          parenthese
+;
+
+parenthese : PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE
+|            NOMBRE
+|            appelfct
+|            LIRE
+|            VAR
+;
+
+var : IDENTIF
+|     IDENTIF CROCHET_OUVRANT expression CROCHET_FERMANT
+;
+
+appelfct : IDENTIF PARENTHESE_OUVRANTE listexpression PARENTHESE_FERMANTE
+;
+
+listexpression : expression
+|                expression VIRGULE listexpression
+|
+;
+
+//Grammaire instructions
+
+instruction : affectation
+|             retour
+|             si
+|             tantque
+|             bloc
+|             appelfct
+|             vide
+;
+
+affectation : var EGAL expression
+;
+
+retour : RETOUR expression
+;
+
+si : SI PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE ALORS bloc
+|    SI PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE ALORS bloc SINON bloc
+;
+
+tantque : TANTQUE expression FAIRE bloc
+;
+
+bloc : CROCHET_OUVRANT b CROCHET_FERMANT
+;
+
+b : instruction b
+|
+;
+
+vide :
+;
+
+lecture : var EGAL LIRE
+;
+
+ecriture : ECRIRE PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE
+;
+
 
 %%
 
