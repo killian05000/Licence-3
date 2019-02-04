@@ -1,4 +1,7 @@
 *.exe
 *.o
 
+Compilation/tp3/analyseur_lexical_flex.c
 
+Compilation/tp3/analyseur_syntaxique.tab.h
+Compilation/tp3/analyseur_syntaxique.tab.c
