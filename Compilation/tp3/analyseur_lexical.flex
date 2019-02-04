@@ -47,6 +47,8 @@ alphanum               {lettre}|{chiffre}
 "ecrire"               {return ECRIRE;}
 {nombre}               {return NOMBRE;}
 {lettre}{alphanum}*    {return IDENTIF;}
+#.*                    {}
+\n                     {yylineo++;}
 
 %%
 

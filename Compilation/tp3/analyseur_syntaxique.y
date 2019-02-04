@@ -10,7 +10,51 @@ int yylex();          // declare dans analyseur lexical
 int yyerror(char *s); // declare ci-dessous
 %}
 
+//symboles
+%token POINT_VIRGULE
+%token PARENTHESE_OUVRANTE
+%token PARENTHESE_FERMANTE
+%token CROCHET_OUVRANT
+%token CROCHET_FERMANT
+%token ACCOLADE_OUVRANTE
+%token ACCOLADE_FERMANTE
+
+//operators
+%token PLUS
+%token MOINS
+%token FOIS
+%token DIVISE
+%token EGAL
+%token INFERIEUR
+%token ET
+%token OU
+%token NON
+
+//variable
+%token IDENTIF
+
+//Type
+%token ENTIER
+
+//Type de valeur
+%token NOMBRE
+
+//Condition
 %token SI
+%token ALORS
+%token SINON
+
+//loop
+%token TANTQUE
+%token FAIRE
+
+//function
+%token lire
+%tokenECRIRE
+
+
+%token RETOUR
+
 //...
 //TODO: compléter avec la liste des terminaux
 
