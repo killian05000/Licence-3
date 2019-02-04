@@ -1,18 +1,22 @@
 CC = gcc
 FLEX = flex
+YACC = bison -d -t
 
-LIBS = -lm 
+LIBS = -lm
 CCFLAGS = -Wall -ggdb
 
-OBJ = analyseur_lexical_flex.o util.o
+OBJ = analyseur_lexical_flex.o util.o analyseur_syntaxique.tab.o
 
 all: compilo
 
 compilo: compilo.c $(OBJ)
 	$(CC) $(CCFLAGS) -o compilo compilo.c $(OBJ)
 
-analyseur_lexical_flex.c: analyseur_lexical.flex
+analyseur_lexical_flex.c: analyseur_lexical.flex analyseur_syntaxique.tab.c
 	$(FLEX) -o $@ $<
+
+analyseur_syntaxique.tab.c: analyseur_syntaxique.y
+	$(YACC) analyseur_syntaxique.y
 
 %.o: %.c
 	$(CC) $(CCFLAGS) -c $^
@@ -24,3 +28,5 @@ clean:
 	- rm -f compilo
 	- rm -f test_yylex
 	- rm -f analyseur_lexical_flex.c
+	- rm -f analyseur_syntaxique.tab.c
+	- rm -f analyseur_syntaxique.tab.h
