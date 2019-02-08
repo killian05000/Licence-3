@@ -11,6 +11,7 @@ int yyerror(char *s); // declare ci-dessous
 %}
 
 //symboles
+%token VIRGULE
 %token POINT_VIRGULE
 %token PARENTHESE_OUVRANTE
 %token PARENTHESE_FERMANTE
@@ -49,12 +50,10 @@ int yyerror(char *s); // declare ci-dessous
 %token FAIRE
 
 //function
-%token lire
+%token LIRE
 %token ECRIRE
 %token RETOUR
 
-
-%start programme
 %%
 
 //Grammaire des expressions arithmétiques
@@ -90,7 +89,7 @@ parenthese : PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE
 |            NOMBRE
 |            appelfct
 |            LIRE
-|            VAR
+|            var
 ;
 
 var : IDENTIF
