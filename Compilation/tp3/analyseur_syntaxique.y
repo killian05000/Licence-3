@@ -104,7 +104,7 @@ listexpression : expression
 |
 ;
 
-//Grammaire instructions
+//Grammaire des instructions
 
 instruction : affectation
 |             retour
