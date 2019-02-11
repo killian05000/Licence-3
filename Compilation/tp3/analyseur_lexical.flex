@@ -4,7 +4,7 @@
 %{
 /* code copié AU DÉBUT de l'analyseur */
 
-#include "symboles.h"
+#include "analyseur_syntaxique.tab.h"
 %}
 %option yylineno
 %option nounput
@@ -48,7 +48,7 @@ alphanum               {lettre}|{chiffre}
 {nombre}               {return NOMBRE;}
 {lettre}{alphanum}*    {return IDENTIF;}
 #.*                    {}
-\n                     {yylineno++;}
+\n                     {}
 
 %%
 
