@@ -54,49 +54,57 @@ int yyerror(char *s); // declare ci-dessous
 %token ECRIRE
 %token RETOUR
 
+%start programme
 %%
 
 //Grammaire des expressions arithmétiques
 
-expression : expression OU et
-|            et
+programme : declaration programme
+|           expression programme
+|           instruction programme
+|
 ;
 
-et : et ET egalite
-|   egalite
+//declaration
+
+declaration : ENTIER var POINT_VIRGULE;
+
+var : IDENTIF;
+
+//expressions
+
+expression : expression OU e1
+|            e1
 ;
 
-egalite : egalite EGAL plusmoins
-|         egalite INFERIEUR plusmoins
-|         plusmoins
+e1 : e1 ET e2
+|    e2
 ;
 
-plusmoins : plusmoins PLUS multidiv
-|           plusmoins MOINS multidiv
-|           multidiv
+e2 : e2 EGAL e3
+|    e2 INFERIEUR e3
+|    e3
 ;
 
-multidiv : multidiv FOIS negation
-|          multidiv DIVISE negation
-|          negation
+e3 : e3 PLUS e4
+|    e3 MOINS e4
+|    e4
 ;
 
-negation : NON negation
-|          parenthese
+e4 : e4 FOIS e5
+|    e4 DIVISE e5
+|    e5
 ;
 
-parenthese : PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE
-|            NOMBRE
-|            appelfct
-|            LIRE
-|            var
+e5 : NON e5
+|    e6
 ;
 
-var : IDENTIF
-|     IDENTIF CROCHET_OUVRANT expression CROCHET_FERMANT
-;
-
-appelfct : IDENTIF PARENTHESE_OUVRANTE listexpression PARENTHESE_FERMANTE
+e6 : PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE
+|    NOMBRE
+|    appelfct
+|    var
+|    lecture
 ;
 
 listexpression : expression
@@ -104,46 +112,43 @@ listexpression : expression
 |
 ;
 
-//Grammaire des instructions
+//fonctions
 
-instruction : affectation
-|             retour
-|             si
-|             tantque
-|             bloc
+declarationfct : IDENTIF PARENTHESE_OUVRANTE listexpression PARENTHESE_FERMANTE;
+
+appelfct : IDENTIF PARENTHESE_OUVRANTE listexpression PARENTHESE_FERMANTE POINT_VIRGULE;
+
+//instructions
+
+instruction : instru_affect
+|             instru_retour
+|             instru_si
+|             instru_tantque
+|             instru_bloc
 |             appelfct
-|             vide
+|             declarationfct
+|             ecriture
 ;
 
-affectation : var EGAL expression
+instru_affect : var EGAL expression POINT_VIRGULE;
+
+instru_retour : RETOUR expression;
+
+instru_si : SI PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE ALORS instru_bloc
+|           SI PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE ALORS instru_bloc SINON instru_bloc
 ;
 
-retour : RETOUR expression
-;
+instru_tantque : TANTQUE expression FAIRE instru_bloc;
 
-si : SI PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE ALORS bloc
-|    SI PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE ALORS bloc SINON bloc
-;
+instru_bloc : ACCOLADE_OUVRANTE contenu_bloc ACCOLADE_FERMANTE;
 
-tantque : TANTQUE expression FAIRE bloc
-;
-
-bloc : CROCHET_OUVRANT b CROCHET_FERMANT
-;
-
-b : instruction b
+contenu_bloc : instruction
 |
 ;
 
-vide :
-;
+lecture : var EGAL LIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE POINT_VIRGULE;
 
-lecture : var EGAL LIRE
-;
-
-ecriture : ECRIRE PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE
-;
-
+ecriture : ECRIRE PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE POINT_VIRGULE;
 
 %%
 
