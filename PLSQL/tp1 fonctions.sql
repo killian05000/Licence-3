@@ -193,6 +193,31 @@ END CopieAtt;
 /
 
 /******************************************************************/
+
+CREATE OR REPLACE FUNCTION CreerDF(p_ChaineAtt varchar) return NUMBER
+IS
+    chaine1 VARCHAR(2000);
+    chaine2 VARCHAR(2000);
+    numEnsG NUMBER;
+    numENSD NUMBER;
+    var NUMBER;
+    position NUMBER;
+BEGIN
+    var := numDF.NextVal;
+    dbms_output.put_line(var);
+    position := INSTR(p_ChaineAtt, '->',1);
+    dbms_output.put_line(position);
+    chaine1 := SUBSTR(p_ChaineAtt, 1, position-1);
+    dbms_output.put_line(chaine1);
+    chaine2 := SUBSTR(p_ChaineAtt, (length(chaine1)+3), (length(p_ChaineAtt)-(length(chaine1))));
+    dbms_output.put_line(chaine2);
+    numEnsG := CreerEnsAtt(chaine1);
+    numEnsD := CreerEnsAtt(chaine2);
+    insert INTO DFS(NumDF, NumEnsGauche, NumEnsDroit) VALUES (var,numEnsG, numEnsD);
+    return var;
+END CreerDF;
+
+/******************************************************************/
 /**************************Execution*******************************/
 /******************************************************************/
 
@@ -227,4 +252,9 @@ END;
 DECLARE V NUMBER;
 BEGIN
 V := CopieAtt(4);
+END;
+
+DECLARE V NUMBER;
+BEGIN
+V := CreerDF('A,B,C->E,D,F,H,I,J');
 END;
