@@ -30,6 +30,7 @@ create table ensembleContientDF
 (
     NumEnsDF NUMBER,
     NumDF NUMBER,
+    CONSTRAINT PK_ensembleContientDF PRIMARY KEY (NumEnsDF, NumDF),
     CONSTRAINT FK_NumEnsDF FOREIGN KEY (NumEnsDF) REFERENCES ensembleDFs(NumEnsDF) on delete cascade,
     CONSTRAINT FK_NumDF FOREIGN KEY (NumDF) REFERENCES DFs (NumDF)
 );
@@ -42,5 +43,6 @@ create sequence NumEnsDF;
 --drop table ensembleAttributs;
 --drop table EnsembleContientAttribut;
 --drop sequence NumEnsAtt;
+--drop table ensembleContientDF;
 
 --SELECT * FROM ensembleAttributs;

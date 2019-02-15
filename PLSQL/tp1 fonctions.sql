@@ -248,6 +248,34 @@ END DF2Chaine;
 
 /******************************************************************/
 
+CREATE OR REPLACE FUNCTION DF2ChaineVirgule(p_NumDF number) return varchar --Fonction utilisé uniquement pour EnsDF2EnsAtt
+IS
+    chaine1 VARCHAR(2000);
+    chaine2 VARCHAR(2000);
+    chaine3 VARCHAR(4000);
+    numEns1 NUMBER;
+    numEns2 NUMBER;
+    CURSOR curseur1 IS SELECT NumEnsGauche FROM DFS WHERE NUMDF=p_NumDF;
+    CURSOR curseur2 IS SELECT NumEnsDroit FROM DFS WHERE NUMDF=p_NumDF;
+BEGIN
+    FOR ligne IN curseur1 LOOP
+        numEns1 := ligne.NumEnsGauche;
+    END LOOP;
+    
+    FOR ligne IN curseur2 LOOP
+        numEns2 := ligne.NumEnsDroit;
+    END LOOP;
+
+    chaine1 := EnsAtt2Chaine(numEns1);
+    chaine2 := EnsAtt2Chaine(numEns2);
+    chaine3 := chaine1 || ',' || chaine2;
+    
+    RETURN chaine3;
+END DF2ChaineVirgule;
+/
+
+/******************************************************************/
+
 CREATE OR REPLACE FUNCTION EstTriviale(p_NumDF number) return INTEGER
 IS
     numEns1 NUMBER;
@@ -367,16 +395,51 @@ END CreerEnsDF;
 CREATE OR REPLACE FUNCTION EnsDF2Chaine(p_NumEnsDF number) return varchar
 IS
     CURSOR curseur IS SELECT NumDF FROM EnsembleContientDF WHERE NumEnsDF=p_NumEnsDF ORDER BY NumDF;
-    resultat varchar(2000);
+    chaine varchar(4000);
 BEGIN
     FOR ligne IN curseur LOOP
-        resultat := resultat || DF2Chaine(ligne.NumDF) || ';';
+        chaine := chaine || DF2Chaine(ligne.NumDF) || ';';
     END LOOP;    
-    resultat := SUBSTR(resultat, 1, length(resultat)-1);
+    chaine := SUBSTR(chaine, 1, length(chaine)-1);
      
-    return resultat;
+    return chaine;
 END EnsDF2Chaine;
 /
+
+/******************************************************************/
+
+CREATE OR REPLACE FUNCTION EnsDF2EnsAtt(p_NumEnsDF number) return NUMBER
+IS
+    CURSOR curseur IS SELECT NumDF FROM EnsembleContientDF WHERE NumEnsDF=p_NumEnsDF ORDER BY NumDF;
+    chaine VARCHAR(4000);
+    NumEns NUMBER;
+BEGIN
+    FOR ligne IN curseur LOOP
+        chaine := chaine || DF2ChaineVirgule(ligne.NumDF) || ',';
+    END LOOP;    
+    chaine := SUBSTR(chaine, 1, length(chaine)-1);
+    
+    NumEns := CreerEnsAtt(chaine);
+     
+    return NumEns;
+END EnsDF2EnsAtt;
+/
+
+/******************************************************************/
+
+CREATE OR REPLACE FUNCTION CopieEnsDF(p_NumEnsDF number) return NUMBER
+IS
+    NumNewEns NUMBER;
+    CURSOR curseur IS SELECT NumDF FROM EnsembleContientDF WHERE NumEnsDF=p_NumEnsDF;
+BEGIN
+    NumNewEns := CreerEnsDFVide();
+    FOR ligne IN curseur LOOP
+        AjouterAtt(ligne.NumDF, NumNewEns);
+        dbms_output.put_line(ligne.NumDF);
+    END LOOP;  
+    
+    return NumNewEns;
+END CopieEnsDF;
 
 /******************************************************************/
 /**************************Execution*******************************/
@@ -443,4 +506,16 @@ BEGIN
 V := CreerEnsDF('Maurice->Marion;Jean->Pascal');
 END;
 
-SELECT EnsDF2Chaine(2) from dual;
+SELECT EnsDF2Chaine(3) from dual;
+
+SELECT EnsDF2EnsAtt(3) from dual;
+
+DECLARE V NUMBER;
+BEGIN
+V := EnsDF2EnsAtt(3);
+END;
+
+DECLARE V NUMBER;
+BEGIN
+V := CopieEnsDF(3);
+END;
