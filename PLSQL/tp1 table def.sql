@@ -21,8 +21,23 @@ create table DFs
     CONSTRAINT FK_NumEnsDroit FOREIGN KEY (NumEnsDroit) REFERENCES ensembleAttributs(NumEnsAtt)
 );
 
+create table ensembleDFs
+(
+    NumEnsDF NUMBER PRIMARY KEY
+);
+
+create table ensembleContientDF
+(
+    NumEnsDF NUMBER,
+    NumDF NUMBER,
+    CONSTRAINT FK_NumEnsDF FOREIGN KEY (NumEnsDF) REFERENCES ensembleDFs(NumEnsDF) on delete cascade,
+    CONSTRAINT FK_NumDF FOREIGN KEY (NumDF) REFERENCES DFs (NumDF)
+);
+
+
 create sequence NumDF;
 create sequence NumEnsAtt;
+create sequence NumEnsDF;
 
 --drop table ensembleAttributs;
 --drop table EnsembleContientAttribut;

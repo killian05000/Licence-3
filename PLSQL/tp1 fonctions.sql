@@ -216,6 +216,167 @@ BEGIN
     insert INTO DFS(NumDF, NumEnsGauche, NumEnsDroit) VALUES (var,numEnsG, numEnsD);
     return var;
 END CreerDF;
+/
+
+/******************************************************************/
+
+CREATE OR REPLACE FUNCTION DF2Chaine(p_NumDF number) return varchar
+IS
+    chaine1 VARCHAR(2000);
+    chaine2 VARCHAR(2000);
+    chaine3 VARCHAR(4000);
+    numEns1 NUMBER;
+    numEns2 NUMBER;
+    CURSOR curseur1 IS SELECT NumEnsGauche FROM DFS WHERE NUMDF=p_NumDF;
+    CURSOR curseur2 IS SELECT NumEnsDroit FROM DFS WHERE NUMDF=p_NumDF;
+BEGIN
+    FOR ligne IN curseur1 LOOP
+        numEns1 := ligne.NumEnsGauche;
+    END LOOP;
+    
+    FOR ligne IN curseur2 LOOP
+        numEns2 := ligne.NumEnsDroit;
+    END LOOP;
+
+    chaine1 := EnsAtt2Chaine(numEns1);
+    chaine2 := EnsAtt2Chaine(numEns2);
+    chaine3 := chaine1 || '->' || chaine2;
+    
+    RETURN chaine3;
+END DF2Chaine;
+/
+
+/******************************************************************/
+
+CREATE OR REPLACE FUNCTION EstTriviale(p_NumDF number) return INTEGER
+IS
+    numEns1 NUMBER;
+    numEns2 NUMBER;
+    CURSOR curseur1 IS SELECT NumEnsGauche FROM DFS WHERE NUMDF=p_NumDF;
+    CURSOR curseur2 IS SELECT NumEnsDroit FROM DFS WHERE NUMDF=p_NumDF;
+BEGIN
+    FOR ligne IN curseur1 LOOP
+        numEns1 := ligne.NumEnsGauche;
+    END LOOP;
+    
+    FOR ligne IN curseur2 LOOP
+        numEns2 := ligne.NumEnsDroit;
+    END LOOP;
+    
+    return EstInclus(numEns2, numEns1);
+END EstTriviale;
+/
+
+/******************************************************************/
+
+CREATE OR REPLACE FUNCTION EstPlusForte(p_NumDF1 number, p_NumDF2 number) return INTEGER
+IS
+    bool1 NUMBER;
+    bool2 NUMBER;
+    bool3 NUMBER;
+    numEns1 NUMBER;
+    numEns2 NUMBER;
+    numEns3 NUMBER;
+    numEns4 NUMBER;
+    CURSOR curseur1 IS SELECT NumEnsGauche FROM DFS WHERE NUMDF=p_NumDF1;
+    CURSOR curseur2 IS SELECT NumEnsDroit FROM DFS WHERE NUMDF=p_NumDF1;
+    CURSOR curseur3 IS SELECT NumEnsGauche FROM DFS WHERE NUMDF=p_NumDF2;
+    CURSOR curseur4 IS SELECT NumEnsDroit FROM DFS WHERE NUMDF=p_NumDF2;
+BEGIN
+    bool3 :=0;
+    
+    FOR ligne IN curseur1 LOOP
+        numEns1 := ligne.NumEnsGauche;
+    END LOOP;
+    
+    FOR ligne IN curseur2 LOOP
+        numEns2 := ligne.NumEnsDroit;
+    END LOOP;
+    
+    FOR ligne IN curseur3 LOOP
+        numEns3 := ligne.NumEnsGauche;
+    END LOOP;
+    
+    FOR ligne IN curseur4 LOOP
+        numEns4 := ligne.NumEnsDroit;
+    END LOOP;
+    
+    bool1 := EstInclus(numEns4, numEns2);
+    bool2 := EstInclus(numEns1, numEns3);
+    
+    IF bool1=1 AND bool2=1 THEN
+        bool3 := 1;
+    END IF;
+    
+    return bool3;    
+END EstPlusForte;
+/
+
+/******************************************************************/
+
+CREATE OR REPLACE FUNCTION CreerEnsDFVide return NUMBER
+IS
+    var NUMBER;
+BEGIN
+    var := NumEnsDF.NextVal;
+    INSERT INTO EnsembleDFS VALUES(var);
+    RETURN var;
+END CreerEnsDFVide;
+/
+
+/******************************************************************/
+
+CREATE OR REPLACE PROCEDURE AjouterDF(p_NumDF number, p_NumEnsDF number)
+IS
+BEGIN
+    INSERT INTO ENSEMBLECONTIENTDF(NumDF,NumEnsDF) VALUES(p_NumDF,p_NumensDF);
+END AjouterDF;
+/
+
+/******************************************************************/
+
+CREATE OR REPLACE FUNCTION CreerEnsDF(p_ChaineDF varchar) return NUMBER
+IS
+    position NUMBER;
+    chaineDF1 VARCHAR(4000);
+    chaineDF2 VARCHAR(4000);
+    numDF1 NUMBER;
+    numDF2 NUMBER;
+    numEnsDF NUMBER;
+BEGIN
+    numEnsDF :=CreerEnsDFVide;
+    position := INSTR(p_ChaineDF, ';',1);
+    dbms_output.put_line(position);
+    chaineDF1 := SUBSTR(p_ChaineDF, 1, position-1);
+    dbms_output.put_line(chaineDF1);
+    chaineDF2 := SUBSTR(p_ChaineDF, (length(chaineDF1)+2), (length(p_ChaineDF)-(length(chaineDF1))));
+    dbms_output.put_line(chaineDF2);
+    
+    numDF1 := CreerDF(chaineDF1);
+    numDF2 := CreerDF(chaineDF2);
+    
+    AjouterDF(numDF1, numEnsDF);
+    AjouterDF(numDF2, numEnsDF);
+    
+    return NumEnsDF;
+END CreerEnsDF;
+/
+
+/******************************************************************/
+
+CREATE OR REPLACE FUNCTION EnsDF2Chaine(p_NumEnsDF number) return varchar
+IS
+    CURSOR curseur IS SELECT NumDF FROM EnsembleContientDF WHERE NumEnsDF=p_NumEnsDF ORDER BY NumDF;
+    resultat varchar(2000);
+BEGIN
+    FOR ligne IN curseur LOOP
+        resultat := resultat || DF2Chaine(ligne.NumDF) || ';';
+    END LOOP;    
+    resultat := SUBSTR(resultat, 1, length(resultat)-1);
+     
+    return resultat;
+END EnsDF2Chaine;
+/
 
 /******************************************************************/
 /**************************Execution*******************************/
@@ -256,5 +417,30 @@ END;
 
 DECLARE V NUMBER;
 BEGIN
-V := CreerDF('A,B,C->E,D,F,H,I,J');
+V := CreerDF('Madrid,Pirate,Bateau,Couscous->Couscous,Madrid,Bateau');
 END;
+
+DECLARE V NUMBER;
+BEGIN
+V := CreerDF('Madrid,Pirate,Bateau,Couscous,Avion,Camion->Madrid,Bateau');
+END;
+
+SELECT DF2Chaine(16) from dual;
+
+SELECT EstTriviale(16) from dual;
+
+SELECT EstPlusForte(16,17) from dual;
+
+DECLARE V NUMBER;
+BEGIN
+V := CreerEnsDFVide;
+END;
+
+Execute AjouterDF(15,1);
+
+DECLARE V NUMBER;
+BEGIN
+V := CreerEnsDF('Maurice->Marion;Jean->Pascal');
+END;
+
+SELECT EnsDF2Chaine(2) from dual;
