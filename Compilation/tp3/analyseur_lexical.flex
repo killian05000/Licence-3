@@ -15,7 +15,8 @@
 lettre                 [a-zA-Z]
 chiffre                [0-9]
 nombre                 [0-9][0-9]*
-alphanum               {lettre}|{chiffre}
+alphanum               {lettre}|{chiffre}|{symbole}
+symbole                [_]
 
 %%
 

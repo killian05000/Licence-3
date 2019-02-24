@@ -1,4 +1,4 @@
-max( entier $a, entier $b ) 
+max( entier $a, entier $b )
 {
     si $a < $b alors {
         retour $b;
