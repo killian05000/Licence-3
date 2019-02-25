@@ -157,7 +157,7 @@ instru_tantque : TANTQUE expression FAIRE instru_bloc;
 instru_bloc : ACCOLADE_OUVRANTE contenu_bloc ACCOLADE_FERMANTE;
 
 contenu_bloc : instruction contenu_bloc
-|              expression contenu_bloc
+//|              expression contenu_bloc
 |
 ;
 
