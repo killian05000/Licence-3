@@ -73,7 +73,7 @@ declaration : ENTIER var POINT_VIRGULE
 ;
 
 var : IDENTIF
-|     var CROCHET_OUVRANT expression CROCHET_FERMANT //(2 shift/reduce conflicts)
+|     IDENTIF CROCHET_OUVRANT expression CROCHET_FERMANT //(2 shift/reduce conflicts)
 ;
 
 //expressions
@@ -140,7 +140,7 @@ instruction : instru_affect
 |             ecriture
 ;
 
-instru_affect : var EGAL expression POINT_VIRGULE
+instru_affect : var EGAL expression POINT_VIRGULE //(1 shift/reduce conflict)
 |               var CROCHET_OUVRANT expression CROCHET_FERMANT EGAL expression POINT_VIRGULE
 ;
 
@@ -161,7 +161,7 @@ contenu_bloc : instruction contenu_bloc
 |
 ;
 
-lecture : var EGAL LIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE POINT_VIRGULE;
+lecture : LIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE;
 
 ecriture : ECRIRE PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE POINT_VIRGULE;
 /*

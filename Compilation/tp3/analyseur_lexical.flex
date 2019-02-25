@@ -12,11 +12,10 @@
 
 /* Déclarations à compléter ... */
 
-lettre                 [a-zA-Z]
+lettre                 [a-zA-Z]|"$"|"_"
 chiffre                [0-9]
 nombre                 [0-9][0-9]*
-alphanum               {lettre}|{chiffre}|{symbole}
-symbole                [_]
+alphanum               {lettre}|{chiffre}
 
 %%
 
@@ -50,6 +49,8 @@ symbole                [_]
 {lettre}{alphanum}*    {return IDENTIF;}
 #.*                    {}
 \n                     {}
+\t                     {}
+" "+                   {}
 
 %%
 
