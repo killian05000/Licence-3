@@ -10,6 +10,7 @@ int yylex();          // declare dans analyseur lexical
 int yyerror(char *s); // declare ci-dessous
 %}
 
+%union{char* cvalue; int ivalue;}
 //symboles
 %token VIRGULE
 %token POINT_VIRGULE
@@ -32,13 +33,13 @@ int yyerror(char *s); // declare ci-dessous
 %token NON
 
 //variable
-%token IDENTIF
+%token <cvalue> IDENTIF
 
 //Type
 %token ENTIER
 
 //Type de valeur
-%token NOMBRE
+%token <ivalue> NOMBRE
 
 //Condition
 %token SI
@@ -53,6 +54,8 @@ int yyerror(char *s); // declare ci-dessous
 %token LIRE
 %token ECRIRE
 %token RETOUR
+
+//arbre de dérivation
 
 %start programme
 %%

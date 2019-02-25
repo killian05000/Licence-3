@@ -45,8 +45,8 @@ alphanum               {lettre}|{chiffre}
 "retour"               {return RETOUR;}
 "lire"                 {return LIRE;}
 "ecrire"               {return ECRIRE;}
-{nombre}               {return NOMBRE;}
-{lettre}{alphanum}*    {return IDENTIF;}
+{nombre}               {yylval.ivalue = atoi(yytext); return NOMBRE;}
+{lettre}{alphanum}*    {yylval = duplique_chaine(yytext); return IDENTIF;}
 #.*                    {}
 \n                     {}
 \t                     {}
