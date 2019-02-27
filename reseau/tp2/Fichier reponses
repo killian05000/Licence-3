@@ -1,0 +1,18 @@
+Killian WOLFGER TP2
+
+--Fichier réponse--
+
+1] Client UDP
+
+1.2-> fonctionne
+1.3-> fonctionne
+
+2] Serveur UDP
+
+2.1-> fonctionne
+2.2-> fonctionne
+2.3-> Le serveur recoit les messages des deux clients
+
+3]
+
+3.2-> La connection marche normalement, un client et un serveur peuvent donc être ecrit en deux langages différent.
