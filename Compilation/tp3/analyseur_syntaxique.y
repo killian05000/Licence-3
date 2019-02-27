@@ -10,6 +10,7 @@ int yylex();          // declare dans analyseur lexical
 int yyerror(char *s); // declare ci-dessous
 %}
 
+%union{char* cvalue; int ivalue;}
 //symboles
 %token VIRGULE
 %token POINT_VIRGULE
@@ -32,13 +33,13 @@ int yyerror(char *s); // declare ci-dessous
 %token NON
 
 //variable
-%token IDENTIF
+%token <cvalue> IDENTIF
 
 //Type
 %token ENTIER
 
 //Type de valeur
-%token NOMBRE
+%token <ivalue> NOMBRE
 
 //Condition
 %token SI
@@ -53,6 +54,8 @@ int yyerror(char *s); // declare ci-dessous
 %token LIRE
 %token ECRIRE
 %token RETOUR
+
+//arbre de dérivation
 
 %start programme
 %%
@@ -73,7 +76,7 @@ declaration : ENTIER var POINT_VIRGULE
 ;
 
 var : IDENTIF
-|     var CROCHET_OUVRANT expression CROCHET_FERMANT //(2 shift/reduce conflicts)
+|     IDENTIF CROCHET_OUVRANT expression CROCHET_FERMANT //(2 shift/reduce conflicts)
 ;
 
 //expressions
@@ -140,7 +143,7 @@ instruction : instru_affect
 |             ecriture
 ;
 
-instru_affect : var EGAL expression POINT_VIRGULE
+instru_affect : var EGAL expression POINT_VIRGULE //(1 shift/reduce conflict)
 |               var CROCHET_OUVRANT expression CROCHET_FERMANT EGAL expression POINT_VIRGULE
 ;
 
@@ -157,11 +160,11 @@ instru_tantque : TANTQUE expression FAIRE instru_bloc;
 instru_bloc : ACCOLADE_OUVRANTE contenu_bloc ACCOLADE_FERMANTE;
 
 contenu_bloc : instruction contenu_bloc
-|              expression contenu_bloc
+//|              expression contenu_bloc
 |
 ;
 
-lecture : var EGAL LIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE POINT_VIRGULE;
+lecture : LIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE;
 
 ecriture : ECRIRE PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE POINT_VIRGULE;
 /*

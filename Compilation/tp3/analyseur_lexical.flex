@@ -12,11 +12,10 @@
 
 /* Déclarations à compléter ... */
 
-lettre                 [a-zA-Z]
+lettre                 [a-zA-Z]|"$"|"_"
 chiffre                [0-9]
 nombre                 [0-9][0-9]*
-alphanum               {lettre}|{chiffre}|{symbole}
-symbole                [_]
+alphanum               {lettre}|{chiffre}
 
 %%
 
@@ -46,10 +45,12 @@ symbole                [_]
 "retour"               {return RETOUR;}
 "lire"                 {return LIRE;}
 "ecrire"               {return ECRIRE;}
-{nombre}               {return NOMBRE;}
-{lettre}{alphanum}*    {return IDENTIF;}
+{nombre}               {yylval.ivalue = atoi(yytext); return NOMBRE;}
+{lettre}{alphanum}*    {yylval = duplique_chaine(yytext); return IDENTIF;}
 #.*                    {}
 \n                     {}
+\t                     {}
+" "+                   {}
 
 %%
 

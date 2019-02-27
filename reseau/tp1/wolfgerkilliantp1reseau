@@ -1,0 +1,172 @@
+Killian WOLFGER
+TP1 Réseau
+
+---------------1. Matériels et Outils Réseaux---------------
+
+---------------1.1. Physique et Liaison de Données---------------
+
+1]Combien y a-t-il de stations dans cette salle ?
+  -Il y en a 18
+
+2]Combien de cartes réseaux comportent votre station ?
+  -Une seule
+
+3]Que signifie l'indicateur lumineux ?
+  -Quand la connection entre la station et le réseau est établie
+
+4]Combien de connecteurs électriques présente une fiche RJ45 ?
+  -Un seul
+
+5]Qu'y a-t-il à l'autre extrémité du câble ?
+  -Le routeur
+
+6]La salle contient-elle d'autre matériel réseaux ?
+  -Non
+
+---------------1.2. Paramètres Réseaux---------------
+
+1]Quelle(s) commande(s) et utilitaire(s) existe(nt) pour connaître les paramètres réseaux de votre station ?
+  -ifconfig (linux) / ipconfig (windows)
+  -ping
+  -netstat
+  -nmblookup
+  -route
+
+2]Quelles sont les adresses IP de votre station ?
+  -IPv4 : 139.124.75.88
+  -IPv6 : fe80::1a03:73ff:fe3d:23ba/64
+
+3]A quel(s) sous-réseau(x) appartiennent les stations de votre salle ?
+  -Le sous-réseau est 139.124.75.x et le masque est 255.255.255.0
+
+
+4]Combien y a-t-il d'adresses dans ces réseaux ?
+  -Il y à 255 adresses dans ce réseau dont certaines déjà reservés telle que l'adresse de broadcast
+
+5]Comment pouvez-vous le savoir ?
+  -En allant dans "informations sur la connexion" ou en tapant des commandes comme ifconfig
+
+---------------2. Couches Réseaux---------------
+
+---------------2.1. Protocole Applicatif SMTP---------------
+
+1]Rappeler à quoi sert le protocole applicatif SMTP.
+  -SMTP soit Simple Mail Transfer Protocol est un protocole de communication utilisé pour transférer les mails, son port est le port 25.
+
+2]On considère une session complète. Expliquer ce qui se passe.
+  -On peut observer la comunication entre un client (rouge) et un serveur (bleu).
+  -Le client veut envoyer un mail
+  -Le client envoit des données au serveur (emmeteur, destinataire, message) et ce dernier retourne des accusés de reception.
+  -Une fois toutes les données envoyés et reçues, le client met fin à la connexion et le serveur aussi.
+
+---------------2.2. Analyse---------------
+
+1]Rappeler pour quelles raisons vous ne pouvez pas capturer de trafic réseau en salle de TP.
+  -Nous n'avons pas les permissions nécessaires
+
+2]Télécharger l'extrait de la session SMTP en binaire (ie capturé sur le réseau).
+  Ouvrir avec un éditeur hexadécimal (comme hexedit). Que constatez-vous ?
+  -On peut observer l'équivalent en hexadécimal des commandes de cette session SMTP
+
+3]Ouvrir avec wireshark, et, en utilisant la fenêtre d'analyse (milieu), déterminer pour chaque paquet les caractéristiques de niveau 3 et 4:
+
+    --PAQUET 1--
+    version IP : Internet Protocol Version 4
+    adresse source (en hexadécimal et en notation pointée) : 147.210.33.133 ; (00:06:25:1a:cf:ee)
+    adresse destination (en hexadécimal et en notation pointée) : 192.168.1.130 ; (00:0d:93:32:aa:2c)
+    port source : 25
+    port destination : 41585
+
+    --PAQUET 2--
+    version IP : Internet Protocol Version 4
+    adresse source (en hexadécimal et en notation pointée) : 192.168.1.130 ; (00:0d:93:32:aa:2c)
+    adresse destination (en hexadécimal et en notation pointée) : 147.210.33.133 ; (00:06:25:1a:cf:ee)
+    port source : 41585
+    port destination : 25
+
+    --PAQUET 3--
+    version IP : Internet Protocol Version 4
+    adresse source (en hexadécimal et en notation pointée) : 147.210.33.133 ; (00:06:25:1a:cf:ee)
+    adresse destination (en hexadécimal et en notation pointée) : 192.168.1.130 ; (00:0d:93:32:aa:2c)
+    port source : 25
+    port destination : 41585
+
+    --PAQUET 4--
+    version IP : Internet Protocol Version 4
+    adresse source (en hexadécimal et en notation pointée) : 192.168.1.130 ; (00:0d:93:32:aa:2c)
+    adresse destination (en hexadécimal et en notation pointée) : 147.210.33.133 ; (00:06:25:1a:cf:ee)
+    port source : 41585
+    port destination : 25
+
+4]A quelle partie de la session complète, cet extrait correspond-t-il ?
+
+   220 startupcom-smtp-out-sp604003av.startup.com StartupCom Service relais mail ready
+   EHLO [192.168.1.130]
+   250-startupcom-smtp-out-sp604003av.startup.com hello [147.210.33.133]      OK , pret
+   pour envoyer un mail
+   250-HELP
+   250-SIZE 13082912
+   250-ENHANCEDSTATUSCODES
+   250-8BITMIME
+   250 OK
+   MAIL FROM:<alice@startup.com>               SIZE=392
+
+---------------3. Outils pour la communication réseaux---------------
+---------------3.1. Clients---------------
+---------------3.1.1. ``telnet``---------------
+
+Faire
+
+ $ telnet pageperso.lis-lab.fr http
+
+Taper ensuite
+
+ GET /~emmanuel.godard/ens/appreseaux/01_decouverte HTTP/1.0
+
+
+1]Que constatez-vous ?
+  -La première commande marche et nous connecte au domaine
+  -la seconde commande nous affiche dans le terminal un code html
+
+---------------3.1.2. ``netcat``---------------
+
+Ecrire dans le fichier get.txt
+
+ GET /~emmanuel.godard/ens/appreseaux/01_decouverte HTTP/1.0
+
+
+Faire
+
+ $ nc pageperso.lis-lab.fr http <get.txt > tp.html
+
+1]Ouvrez le fichier tp.html. Que constatez-vous ?
+  -le fichier tp.html à était créer. On obtient une page web statique retournant une erreur [400: BAD REQUEST]
+
+Réessayer éventuellement avec
+
+ $ nc -C pageperso.lis-lab.fr http <get.txt > tp.html
+
+2]Expliquez. Pouvez dire quel est le nom et la version du logiciel serveur web utilisé pour cette page web statique ?
+  -Le serveur utilisé est le serveur Apache de version 2.4.6
+
+3]Tester ces commandes sur un site dynamique comme http://www.lis-lab.fr. Que constatez-vous ?
+  -La commande : nc -C http://www.lis-lab.fr http <get.txt > tp.html ne fonctionne pas
+
+---------------3.2. Un serveur simple---------------
+
+La commande netcat est très versatile, elle peut également être utilisée en mini-serveur.
+
+Faire
+
+ $ nc -l 1234
+
+Dans un autre terminal, faire
+
+ $ nc localhost 1234
+
+1]Que constatez-vous ?
+  -A priori il ne se passe rien
+
+Pour finir, demandez l'adresse IP de votre voisin et connectez-vous à son serveur netcat.
+
+2]Que se passe-t-il si deux voisins essaient de se connecter simultanément ?
