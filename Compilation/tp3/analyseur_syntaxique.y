@@ -74,34 +74,34 @@ int yyerror(char *s); // declare ci-dessous
 
 // Axiome de la grammaire
 
-programme : ligneDeclarationsVar ensembleDefinitionFct;
+programme : ligneDecVar ensDefFct;
 
 
 // Grammaire des declarations de variables
 
-ligneDeclarationsVar : suiteDeclarationsVar POINT_VIRGULE
-		|
+ligneDecVar : suiteDecVar POINT_VIRGULE
+|
+;
+
+suiteDecVar: decVar VIRGULE suiteDecVar
+		|	decVar
 		;
 
-suiteDeclarationsVar: declarationVar VIRGULE suiteDeclarationsVar
-		|	declarationVar
-		;
-
-declarationVar : ENTIER IDENTIF
+decVar : ENTIER IDENTIF
 		|	ENTIER IDENTIF CROCHET_OUVRANT NOMBRE CROCHET_FERMANT				//Pas de var/expArith pour la taille?
 		;
 
 
 // Grammaire des definitions de fonctions
 
-ensembleDefinitionFct : definitionFct ensembleDefinitionFct
-		|	definitionFct
+ensDefFct : defFct ensDefFct
+		|	defFct
 		;
 
 
-definitionFct : IDENTIF PARENTHESE_OUVRANTE declarationsArgs PARENTHESE_FERMANTE ligneDeclarationsVar blocInstructions
+defFct : IDENTIF PARENTHESE_OUVRANTE decArgs PARENTHESE_FERMANTE ligneDecVar intru_bloc
 
-declarationsArgs : suiteDeclarationsVar
+decArgs : suiteDecVar
 		|
 		;
 
@@ -109,84 +109,84 @@ declarationsArgs : suiteDeclarationsVar
 
 
 // grammaire des expressions arithmetiques
-expressionArithmetique : expressionArithmetique OU conjonction
-		|	conjonction
+e1 : e1 OU e2
+		|	e2
 		;
 
-conjonction : conjonction ET comparaison
-		|	comparaison
+e2 : e2 ET e3
+		|	e3
 		;
 
-comparaison	: comparaison EGAL somme
-		|	comparaison INFERIEUR somme
-		| somme
+e3	: e3 EGAL e4
+		|	e3 INFERIEUR e4
+		| e4
 		;
 
-somme : somme PLUS produit
-		|	somme MOINS produit
-		|	produit
+e4 : e4 PLUS e5
+		|	e4 MOINS e5
+		|	e5
 		;
 
-produit : produit FOIS negation
-		|	produit DIVISE negation
-		|	negation
+e5 : e5 FOIS e6
+		|	e5 DIVISE e6
+		|	e6
 		;
 
-negation : NON negation
-		| expressionPrioritaire
+e6 : NON e6
+		| e7
 		;
 
-expressionPrioritaire : PARENTHESE_OUVRANTE expressionArithmetique PARENTHESE_FERMANTE
+e7 : PARENTHESE_OUVRANTE e1 PARENTHESE_FERMANTE
 		|	varAcces
 		|	NOMBRE																					//Attention Valeur (pas pointeur)
-		| 	fonction
-		|  	LIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE
+		| fonction
+		| LIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE
 		;
 
 varAcces : IDENTIF
-		|	IDENTIF CROCHET_OUVRANT expressionArithmetique CROCHET_FERMANT
+		|	IDENTIF CROCHET_OUVRANT e1 CROCHET_FERMANT
 		;
 
 fonction : IDENTIF PARENTHESE_OUVRANTE argument PARENTHESE_FERMANTE;
 
-argument : expressionArithmetique listArg
+argument : e1 listArg
 		|
 		;
 
-listArg : VIRGULE expressionArithmetique	listArg
+listArg : VIRGULE e1	listArg
 		|
 		;
 
 
 // Grammaire des instructions
 
-instruction : affectation
+instruction : intru_affect
 		|	condition
-		|	boucle
-		|	retour
+		|	intru_boucle
+		|	intru_retour
 		|	appelFonction
-		|	blocInstructions
+		|	intru_bloc
 		|	POINT_VIRGULE
 		;
 
-affectation : varAcces EGAL expressionArithmetique POINT_VIRGULE
+intru_affect : varAcces EGAL e1 POINT_VIRGULE
 
-condition : SI expressionArithmetique ALORS blocInstructions
-		|	SI expressionArithmetique ALORS blocInstructions SINON blocInstructions
+condition : SI e1 ALORS intru_bloc
+		|	SI e1 ALORS intru_bloc SINON intru_bloc
 		;
 
-boucle : TANTQUE expressionArithmetique FAIRE blocInstructions
+intru_boucle : TANTQUE e1 FAIRE intru_bloc
 
-retour : RETOUR expressionArithmetique POINT_VIRGULE
+intru_retour : RETOUR e1 POINT_VIRGULE
 
 appelFonction : fonction POINT_VIRGULE			// Manque Lire...
-		|	ECRIRE PARENTHESE_OUVRANTE expressionArithmetique PARENTHESE_FERMANTE POINT_VIRGULE
+		|	ECRIRE PARENTHESE_OUVRANTE e1 PARENTHESE_FERMANTE POINT_VIRGULE
 		;
 
-blocInstructions : ACCOLADE_OUVRANTE ensembleInstructions ACCOLADE_FERMANTE
+intru_bloc : ACCOLADE_OUVRANTE listeInstru ACCOLADE_FERMANTE
 		;
 
-ensembleInstructions : instruction ensembleInstructions
+listeInstru : instruction listeInstru
 		|
 		;
 
