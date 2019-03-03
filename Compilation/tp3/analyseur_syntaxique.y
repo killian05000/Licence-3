@@ -72,115 +72,124 @@ int yyerror(char *s); // declare ci-dessous
 %start programme
 %%
 
-//Grammaire des expressions arithmétiques
+// Axiome de la grammaire
 
-programme : declaration programme {&& = cree_n_prog(&1, &2);}
-|           expression programme
-|           instruction programme
-|
-;
-
-//declaration & affectation
-
-declaration : ENTIER var POINT_VIRGULE
-|             ENTIER var VIRGULE declaration
-|             ENTIER var CROCHET_OUVRANT NOMBRE CROCHET_FERMANT POINT_VIRGULE
-;
-
-var : IDENTIF
-|     IDENTIF CROCHET_OUVRANT expression CROCHET_FERMANT //(2 shift/reduce conflicts)
-;
-
-//expressions
-
-expression : expression OU e1
-|            e1
-;
-
-e1 : e1 ET e2
-|    e2
-;
-
-e2 : e2 EGAL e3 //(2 shift/reduce conflicts)
-|    e2 INFERIEUR e3
-|    e3
-;
-
-e3 : e3 PLUS e4
-|    e3 MOINS e4
-|    e4
-;
-
-e4 : e4 FOIS e5
-|    e4 DIVISE e5
-|    e5
-;
-
-e5 : NON e5
-|    e6
-;
-
-e6 : PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE
-|    NOMBRE
-|    var
-|    lecture
-|    declarationfct
-;
-
-listexpression : expression
-|                expression VIRGULE listexpression
-|                ENTIER var VIRGULE listexpression
-|                ENTIER var
-|
-;
+programme : ligneDeclarationsVar ensembleDefinitionFct;
 
 
-//fonctions
+// Grammaire des declarations de variables
 
-declarationfct : IDENTIF PARENTHESE_OUVRANTE listexpression PARENTHESE_FERMANTE; /*(useless car var = identif)*/
+ligneDeclarationsVar : suiteDeclarationsVar POINT_VIRGULE
+		|
+		;
 
-appelfct : IDENTIF PARENTHESE_OUVRANTE listexpression PARENTHESE_FERMANTE POINT_VIRGULE;
+suiteDeclarationsVar: declarationVar VIRGULE suiteDeclarationsVar
+		|	declarationVar
+		;
+
+declarationVar : ENTIER IDENTIF
+		|	ENTIER IDENTIF CROCHET_OUVRANT NOMBRE CROCHET_FERMANT				//Pas de var/expArith pour la taille?
+		;
+
+
+// Grammaire des definitions de fonctions
+
+ensembleDefinitionFct : definitionFct ensembleDefinitionFct
+		|	definitionFct
+		;
+
+
+definitionFct : IDENTIF PARENTHESE_OUVRANTE declarationsArgs PARENTHESE_FERMANTE ligneDeclarationsVar blocInstructions
+
+declarationsArgs : suiteDeclarationsVar
+		|
+		;
 
 
 
-//instructions
 
-instruction : instru_affect
-|             instru_retour
-|             instru_si
-|             instru_tantque
-|             instru_bloc
-|             appelfct
-//|             declarationfct
-|             ecriture
-;
+// grammaire des expressions arithmetiques
+expressionArithmetique : expressionArithmetique OU conjonction
+		|	conjonction
+		;
 
-instru_affect : var EGAL expression POINT_VIRGULE //(1 shift/reduce conflict)
-|               var CROCHET_OUVRANT expression CROCHET_FERMANT EGAL expression POINT_VIRGULE
-;
+conjonction : conjonction ET comparaison
+		|	comparaison
+		;
 
-instru_retour : RETOUR expression POINT_VIRGULE;
+comparaison	: comparaison EGAL somme
+		|	comparaison INFERIEUR somme
+		| somme
+		;
 
-instru_si : SI expression ALORS instru_bloc
-|           SI expression ALORS instru_bloc SINON instru_bloc
-//|           SI PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE ALORS instru_bloc
-//|           SI PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE ALORS instru_bloc SINON instru_bloc
-;
+somme : somme PLUS produit
+		|	somme MOINS produit
+		|	produit
+		;
 
-instru_tantque : TANTQUE expression FAIRE instru_bloc;
+produit : produit FOIS negation
+		|	produit DIVISE negation
+		|	negation
+		;
 
-instru_bloc : ACCOLADE_OUVRANTE contenu_bloc ACCOLADE_FERMANTE;
+negation : NON negation
+		| expressionPrioritaire
+		;
 
-contenu_bloc : instruction contenu_bloc
-//|              expression contenu_bloc
-|
-;
+expressionPrioritaire : PARENTHESE_OUVRANTE expressionArithmetique PARENTHESE_FERMANTE
+		|	varAcces
+		|	NOMBRE																					//Attention Valeur (pas pointeur)
+		| 	fonction
+		|  	LIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE
+		;
 
-lecture : LIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE;
+varAcces : IDENTIF
+		|	IDENTIF CROCHET_OUVRANT expressionArithmetique CROCHET_FERMANT
+		;
 
-ecriture : ECRIRE PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE POINT_VIRGULE;
-/*
-*/
+fonction : IDENTIF PARENTHESE_OUVRANTE argument PARENTHESE_FERMANTE;
+
+argument : expressionArithmetique listArg
+		|
+		;
+
+listArg : VIRGULE expressionArithmetique	listArg
+		|
+		;
+
+
+// Grammaire des instructions
+
+instruction : affectation
+		|	condition
+		|	boucle
+		|	retour
+		|	appelFonction
+		|	blocInstructions
+		|	POINT_VIRGULE
+		;
+
+affectation : varAcces EGAL expressionArithmetique POINT_VIRGULE
+
+condition : SI expressionArithmetique ALORS blocInstructions
+		|	SI expressionArithmetique ALORS blocInstructions SINON blocInstructions
+		;
+
+boucle : TANTQUE expressionArithmetique FAIRE blocInstructions
+
+retour : RETOUR expressionArithmetique POINT_VIRGULE
+
+appelFonction : fonction POINT_VIRGULE			// Manque Lire...
+		|	ECRIRE PARENTHESE_OUVRANTE expressionArithmetique PARENTHESE_FERMANTE POINT_VIRGULE
+		;
+
+blocInstructions : ACCOLADE_OUVRANTE ensembleInstructions ACCOLADE_FERMANTE
+		;
+
+ensembleInstructions : instruction ensembleInstructions
+		|
+		;
+
 
 %%
 
