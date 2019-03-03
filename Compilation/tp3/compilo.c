@@ -2,11 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "syntabs.h"
 #include "analyseur_lexical_flex.h"
 #include "analyseur_syntaxique.tab.h"
+#include "affiche_arbre_abstrait.h"
 
 FILE *yyin;
 extern char *yytext;   // déclaré dans analyseur_lexical
+n_prog* n;
 
 /***********************************************************************
  * Fonction auxiliaire appelée par le compilo en mode -l pour tester
@@ -98,6 +101,9 @@ int main(int argc, char **argv) {
     yyparse();
   }
   if( affiche_syntaxe_abstraite ) {
+    printf("%p\n",&n);
+    if(yyparse()==0)
+      affiche_n_prog(n);
     //Affiche arbre abstrait
   }
   if(affiche_code3a){
