@@ -20,7 +20,16 @@ int yyerror(char *s); // declare ci-dessous
   char* cvalue;
   int ivalue;
   n_prog* prog;
+  n_l_dec* l_dec;
+	n_dec* dec;
+	n_l_instr* l_instr;
+	n_instr* instr;
+	n_l_exp* l_exp;
+	n_exp* exp;
+	n_var* var;
+  n_appel* appel;
 }
+
 //symboles
 %token VIRGULE
 %token POINT_VIRGULE
@@ -67,128 +76,150 @@ int yyerror(char *s); // declare ci-dessous
 
 //arbre de dérivation
 
-%type <prog> programme
+%type <prog>  programme
+
+%type <dec> defFct
+%type <l_dec> ensDefFct
+
+%type <l_dec> decArgs
+%type <dec> decVar
+%type <l_dec> suiteDecVar
+%type <l_dec> ligneDecVar
+
+%type <instr> instru_affect condition instru_boucle instru_retour appelFonction instru_bloc
+
+%type <appel> fonction
+
+%type <var> varAcces
+
+%type <l_instr> ensembleInstructions
+%type <instr> instruction
+
+%type <l_exp> argument listArg
+%type <exp> expression e1 e2 e3 e4 e5 e6
+
+
 
 %start programme
+
 %%
 
-// Axiome de la grammaire
 
-programme : ligneDecVar ensDefFct;
+programme : ligneDecVar ensDefFct	{$$  = cree_n_prog($1, $2);};
 
 
-// Grammaire des declarations de variables
+//******************Grammaire des declarations (dec) de variables******************//
 
-ligneDecVar : suiteDecVar POINT_VIRGULE
-|
+ligneDecVar : suiteDecVar POINT_VIRGULE 	{$$ = $1;}
+|               													{$$=NULL;}
 ;
 
-suiteDecVar: decVar VIRGULE suiteDecVar
-		|	decVar
-		;
+suiteDecVar: decVar VIRGULE suiteDecVar 	{$$ = cree_n_l_dec($1, $3);}
+|	           decVar											  {$$ = cree_n_l_dec($1, NULL);}
+;
 
-decVar : ENTIER IDENTIF
-		|	ENTIER IDENTIF CROCHET_OUVRANT NOMBRE CROCHET_FERMANT				//Pas de var/expArith pour la taille?
-		;
-
-
-// Grammaire des definitions de fonctions
-
-ensDefFct : defFct ensDefFct
-		|	defFct
-		;
+decVar : ENTIER IDENTIF									              	          {$$ = cree_n_dec_var($2);}
+|	       ENTIER IDENTIF CROCHET_OUVRANT NOMBRE CROCHET_FERMANT  	{$$ = cree_n_dec_tab($2, $4);}
+;
 
 
-defFct : IDENTIF PARENTHESE_OUVRANTE decArgs PARENTHESE_FERMANTE ligneDecVar intru_bloc
+//******************Grammaire des definitions (def) de fonctions******************//
 
-decArgs : suiteDecVar
-		|
-		;
-
-
+ensDefFct : defFct ensDefFct 	  {$$ = cree_n_l_dec($1, $2);}
+|         	defFct						  {$$ = cree_n_l_dec($1, NULL);}
+;
 
 
-// grammaire des expressions arithmetiques
-e1 : e1 OU e2
-		|	e2
-		;
+defFct : IDENTIF PARENTHESE_OUVRANTE decArgs PARENTHESE_FERMANTE ligneDecVar instru_bloc 	{$$ = cree_n_dec_fonc($1, $3, $5, $6);};
 
-e2 : e2 ET e3
-		|	e3
-		;
-
-e3	: e3 EGAL e4
-		|	e3 INFERIEUR e4
-		| e4
-		;
-
-e4 : e4 PLUS e5
-		|	e4 MOINS e5
-		|	e5
-		;
-
-e5 : e5 FOIS e6
-		|	e5 DIVISE e6
-		|	e6
-		;
-
-e6 : NON e6
-		| e7
-		;
-
-e7 : PARENTHESE_OUVRANTE e1 PARENTHESE_FERMANTE
-		|	varAcces
-		|	NOMBRE																					//Attention Valeur (pas pointeur)
-		| fonction
-		| LIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE
-		;
-
-varAcces : IDENTIF
-		|	IDENTIF CROCHET_OUVRANT e1 CROCHET_FERMANT
-		;
-
-fonction : IDENTIF PARENTHESE_OUVRANTE argument PARENTHESE_FERMANTE;
-
-argument : e1 listArg
-		|
-		;
-
-listArg : VIRGULE e1	listArg
-		|
-		;
+decArgs : suiteDecVar			{$$ = $1;}
+|										      {$$ = NULL;}
+;
 
 
-// Grammaire des instructions
+//******************Grammaire des expressions******************//
 
-instruction : intru_affect
-		|	condition
-		|	intru_boucle
-		|	intru_retour
-		|	appelFonction
-		|	intru_bloc
-		|	POINT_VIRGULE
-		;
 
-intru_affect : varAcces EGAL e1 POINT_VIRGULE
+expression : expression OU e1 	{$$ = cree_n_exp_op(ou, $1, $3);}
+|	           e1									{$$ = $1;}
+;
 
-condition : SI e1 ALORS intru_bloc
-		|	SI e1 ALORS intru_bloc SINON intru_bloc
-		;
+e1 : e1 ET e2	  {$$ = cree_n_exp_op(et, $1, $3);}
+|    e2					{$$ = $1;}
+;
 
-intru_boucle : TANTQUE e1 FAIRE intru_bloc
+e2	: e2 EGAL e3	    	{$$ = cree_n_exp_op(egal, $1, $3);}
+|	    e2 INFERIEUR e3		{$$ = cree_n_exp_op(inferieur, $1, $3);}
+|     e3								{$$ = $1;}
+;
 
-intru_retour : RETOUR e1 POINT_VIRGULE
+e3 : e3 PLUS e4		  {$$ = cree_n_exp_op(plus, $1, $3);}
+|  	 e3 MOINS e4	  {$$ = cree_n_exp_op(moins, $1, $3);}
+|	   e4				      {$$ = $1;}
+;
 
-appelFonction : fonction POINT_VIRGULE			// Manque Lire...
-		|	ECRIRE PARENTHESE_OUVRANTE e1 PARENTHESE_FERMANTE POINT_VIRGULE
-		;
+e4 : e4 FOIS e5		  {$$ = cree_n_exp_op(fois, $1, $3);}
+|    e4 DIVISE e5		{$$ = cree_n_exp_op(divise, $1, $3);}
+|	   e5	            {$$ = $1;}
+;
 
-intru_bloc : ACCOLADE_OUVRANTE listeInstru ACCOLADE_FERMANTE
-		;
+e5 : NON e5   {$$ = cree_n_exp_op(non, $2, NULL);}
+|    e6		    {$$ = $1;}
+;
 
-listeInstru : instruction listeInstru
-		|
-		;
+e6 : PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE		{$$ = $2;}
+|    varAcces                                             {$$ = cree_n_exp_var($1);}
+|    NOMBRE		                                            {$$ = cree_n_exp_entier($1);}
+|    fonction                                         	  {$$ = cree_n_exp_appel($1);}
+|    LIRE PARENTHESE_OUVRANTE PARENTHESE_FERMANTE	      	{$$ = cree_n_exp_lire();}
+;
+
+varAcces : IDENTIF                                              {$$ = cree_n_var_simple($1);}
+|          IDENTIF CROCHET_OUVRANT expression CROCHET_FERMANT	  {$$ = cree_n_var_indicee($1, $3);}
+;
+
+fonction : IDENTIF PARENTHESE_OUVRANTE argument PARENTHESE_FERMANTE		{$$ = cree_n_appel($1, $3);};
+
+argument : expression listArg	{$$=cree_n_l_exp($1,$2);}
+|           									{$$ = NULL;}
+;
+
+listArg : VIRGULE expression	listArg		{$$ = cree_n_l_exp($2, $3);}
+|												                {$$=NULL;}
+;
+
+
+//******************Grammaire des instructions******************//
+
+
+instruction : instru_affect		{$$ = $1;}
+|	            condition		    {$$ = $1;}
+|             instru_boucle		{$$ = $1;}
+|	            instru_retour		{$$ = $1;}
+|	            appelFonction		{$$ = $1;}
+|	            instru_bloc 	  {$$ = $1;}
+|	            POINT_VIRGULE		{$$ = cree_n_instr_vide();}
+;
+
+instru_affect : varAcces EGAL expression POINT_VIRGULE    {$$ = cree_n_instr_affect($1, $3);};
+
+condition : SI expression ALORS instru_bloc	                    {$$ = cree_n_instr_si($2, $4, NULL);}
+|         	SI expression ALORS instru_bloc SINON instru_bloc		{$$ = cree_n_instr_si($2, $4, $6);}
+;
+
+instru_boucle : TANTQUE expression FAIRE instru_bloc 	  {$$ = cree_n_instr_tantque($2, $4);};
+
+instru_retour : RETOUR expression POINT_VIRGULE   {$$ = cree_n_instr_retour($2);};
+
+appelFonction : fonction POINT_VIRGULE		                                                {$$ = cree_n_instr_appel($1);}
+|             	ECRIRE PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE POINT_VIRGULE		{$$ = cree_n_instr_ecrire($3);}
+;
+
+instru_bloc : ACCOLADE_OUVRANTE ensembleInstructions ACCOLADE_FERMANTE 	{$$ = cree_n_instr_bloc($2);};
+
+ensembleInstructions : instruction ensembleInstructions		{$$ = cree_n_l_instr($1, $2);}
+|													                                {$$=NULL;}
+;
 
 
 %%
