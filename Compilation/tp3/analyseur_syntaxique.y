@@ -2,15 +2,25 @@
 #include<stdlib.h>
 #include<stdio.h>
 #define YYDEBUG 1
-//#include"syntabs.h" // pour syntaxe abstraite
-//extern n_prog *n;   // pour syntaxe abstraite
+#include "affiche_arbre_abstrait.h"
+#include"syntabs.h" // pour syntaxe abstraite
+extern n_prog *n;   // pour syntaxe abstraite
 extern FILE *yyin;    // declare dans compilo
 extern int yylineno;  // declare dans analyseur lexical
 int yylex();          // declare dans analyseur lexical
 int yyerror(char *s); // declare ci-dessous
 %}
 
-%union{char* cvalue; int ivalue;}
+%code requires
+{
+  #include "syntabs.h"
+}
+
+%union{
+  char* cvalue;
+  int ivalue;
+  n_prog* prog;
+}
 //symboles
 %token VIRGULE
 %token POINT_VIRGULE
@@ -57,12 +67,14 @@ int yyerror(char *s); // declare ci-dessous
 
 //arbre de dérivation
 
+%type <prog> programme
+
 %start programme
 %%
 
 //Grammaire des expressions arithmétiques
 
-programme : declaration programme
+programme : declaration programme {&& = cree_n_prog(&1, &2);}
 |           expression programme
 |           instruction programme
 |

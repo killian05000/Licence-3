@@ -3,7 +3,8 @@
  */
 %{
 /* code copié AU DÉBUT de l'analyseur */
-
+#include "syntabs.h"
+#include "affiche_arbre_abstrait.h"
 #include "analyseur_syntaxique.tab.h"
 %}
 %option yylineno
@@ -46,7 +47,7 @@ alphanum               {lettre}|{chiffre}
 "lire"                 {return LIRE;}
 "ecrire"               {return ECRIRE;}
 {nombre}               {yylval.ivalue = atoi(yytext); return NOMBRE;}
-{lettre}{alphanum}*    {yylval = duplique_chaine(yytext); return IDENTIF;}
+{lettre}{alphanum}*    {yylval.cvalue = strdup(yytext); return IDENTIF;}
 #.*                    {}
 \n                     {}
 \t                     {}
