@@ -103,7 +103,10 @@ int main(int argc, char **argv) {
   if( affiche_syntaxe_abstraite ) {
     printf("%p\n",&n);
     if(yyparse()==0)
+    {
+      yyparse();
       affiche_n_prog(n);
+    }
     //Affiche arbre abstrait
   }
   if(affiche_code3a){
