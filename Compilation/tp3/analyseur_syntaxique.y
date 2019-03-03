@@ -75,6 +75,7 @@ int yyerror(char *s); // declare ci-dessous
 %token RETOUR
 
 //arbre de dérivation
+//******Types******//
 
 %type <prog>  programme
 
@@ -105,7 +106,7 @@ int yyerror(char *s); // declare ci-dessous
 %%
 
 
-programme : ligneDecVar ensDefFct	{$$  = cree_n_prog($1, $2);};
+programme : ligneDecVar ensDefFct	{$$ = n = cree_n_prog($1, $2);};
 
 
 //******************Grammaire des declarations (dec) de variables******************//
