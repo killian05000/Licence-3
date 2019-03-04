@@ -84,7 +84,7 @@ int yyerror(char *s); // declare ci-dessous
 
 %type <l_dec> decArgs
 %type <dec> decVar
-%type <l_dec> suiteDecVar
+%type <l_dec> listeDecVar
 %type <l_dec> ligneDecVar
 
 %type <instr> instru_affect condition instru_boucle instru_retour appelFonction instru_bloc
@@ -111,11 +111,11 @@ programme : ligneDecVar ensDefFct	{$$ = n = cree_n_prog($1, $2);};
 
 //******************Grammaire des declarations (dec) de variables******************//
 
-ligneDecVar : suiteDecVar POINT_VIRGULE 	{$$ = $1;}
+ligneDecVar : listeDecVar POINT_VIRGULE 	{$$ = $1;}
 |               													{$$=NULL;}
 ;
 
-suiteDecVar: decVar VIRGULE suiteDecVar 	{$$ = cree_n_l_dec($1, $3);}
+listeDecVar: decVar VIRGULE listeDecVar 	{$$ = cree_n_l_dec($1, $3);}
 |	           decVar											  {$$ = cree_n_l_dec($1, NULL);}
 ;
 
@@ -133,7 +133,7 @@ ensDefFct : defFct ensDefFct 	  {$$ = cree_n_l_dec($1, $2);}
 
 defFct : IDENTIF PARENTHESE_OUVRANTE decArgs PARENTHESE_FERMANTE ligneDecVar instru_bloc 	{$$ = cree_n_dec_fonc($1, $3, $5, $6);};
 
-decArgs : suiteDecVar			{$$ = $1;}
+decArgs : listeDecVar			{$$ = $1;}
 |										      {$$ = NULL;}
 ;
 
