@@ -7,7 +7,9 @@ import java.util.Scanner;
 import java.net.Socket;
 import java.net.*;
 import java.io.*;
-
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 public class ClientTCP
 {
@@ -30,16 +32,18 @@ public class ClientTCP
         return;
       }
 
-      Socket socket;
-      DataInputStream userInput;
-      PrintStream theOutputStream;
+      Socket socket = new Socket(adr, port);
+      BufferedReader userIn = new BufferedReader(new InputStreamReader(System.in));
+      PrintWriter out = new PrintWriter(socket.getOutputStream());
+      System.out.println("Client connected");
+      String msg;
 
-        InetAddress serveur = InetAddress.getByName("localhost");
-        socket = new Socket(serveur, port);
-        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        PrintStream out = new PrintStream(socket.getOutputStream());
-        out.println(args[0]);
-        System.out.println(in.readLine());
+      do
+      {
+        msg = userIn.readLine();
+        out.println(msg);
+        out.flush();
+      } while (msg != "stop");
 
       socket.close();
     }
