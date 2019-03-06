@@ -12,16 +12,24 @@ class EchoServer {
   /* Démarrage et délégation des connexions entrantes */
   public void demarrer(int port) {
     ServerSocket ssocket; // socket d'écoute utilisée par le serveur
+    Socket csocket;
 
     System.out.println("Lancement du serveur sur le port " + port);
-    try {
+    try
+    {
       ssocket = new ServerSocket(port);
       ssocket.setReuseAddress(true); /* rend le port réutilisable rapidement */
-      while (true) {
-	  (new Handler(ssocket.accept())).run();
+      while (true)
+      {
+	       //(new Handler(ssocket.accept())).run();
+         csocket = ssocket.accept();
+         Handler ch = new Handler(csocket);
+         Thread thread = new Thread(ch);
+         thread.start();
       }
-    } catch (IOException ex) {
-      System.out.println("Arrêt anormal du serveur.");
+    } catch (IOException ex)
+    {
+      System.out.println("Arrêt anormal du serveur."+ ex);
       return;
     }
   }
@@ -31,14 +39,18 @@ class EchoServer {
     EchoServer serveur;
 
     /* Traitement des arguments */
-    if (argc == 1) {
-      try {
+    if (argc == 1)
+    {
+      try
+      {
         serveur = new EchoServer();
         serveur.demarrer(Integer.parseInt(args[0]));
-      } catch (Exception e) {
+      } catch (Exception e)
+      {
         e.printStackTrace();
       }
-    } else {
+    } else
+    {
       System.out.println("Usage: java EchoServer port");
     }
     return;
@@ -57,7 +69,8 @@ class EchoServer {
     InetAddress hote;
     int port;
 
-    Handler(Socket socket) throws IOException {
+    Handler(Socket socket) throws IOException
+    {
       this.socket = socket;
       out = new PrintWriter(socket.getOutputStream(), true);
       in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -65,36 +78,46 @@ class EchoServer {
       port = socket.getPort();
     }
 
-    public void run() {
+    public void run()
+    {
       String tampon;
       long compteur = 0;
 
-      try {
+      try
+      {
         /* envoi du message d'accueil */
         out.println("Bonjour " + hote + "! (vous utilisez le port " + port + ")");
 
-        do {
+        do
+        {
           /* Faire echo et logguer */
           tampon = in.readLine();
-          if (tampon != null) {
+          if (tampon != null)
+          {
             compteur++;
             /* log */
             System.err.println("[" + hote + ":" + port + "]: " + compteur + ":" + tampon);
             /* echo vers le client */
             out.println("> " + tampon);
-          } else {
+          } else
+          {
             break;
           }
         } while (true);
 
         /* le correspondant a quitté */
-        in.close();
-        out.println("Au revoir...");
-        out.close();
-        socket.close();
+        if(!socket.isClosed())
+        {
+          in.close();
+          out.println("Au revoir...");
+          out.close();
+          socket.close();
 
-        System.err.println("[" + hote + ":" + port + "]: Terminé...");
-      } catch (Exception e) {
+          System.err.println("[" + hote + ":" + port + "]: Terminé...");
+        }
+      } catch (Exception e)
+
+      {
         e.printStackTrace();
       }
     }
