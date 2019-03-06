@@ -1,0 +1,47 @@
+1.2]
+1) l'adresse locale en IPv6 est ::1
+3) Cela fonctionne car Java fait l'adaptation
+
+1.3] Cela fonctionne sans modifications
+
+1.4] fedc:6482:cafe:ba05:a200:e8ff:fe65:df9a
+     (à la maison)
+
+2.1] Le mécanisme de double pile IP consiste à doter chaque équipement d'une double pile protocolaire et d'affecter une Adresse
+     IPv4 et/ou IPv6 à chaque interface réseau.
+
+2.2] Si on lui donne une adresse il peut derterminer si elle est IPv4 ou IPv6 et appliquer le bon protocole
+     Si on lui donne un nom de domaine il peut également savoir si il est IPv4 ou IPv6 et effectuer des actions
+     différentes selon le cas.
+
+2.3]
+
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       User       Inode      PID/Program name
+tcp        0      0 localhost:ipp           0.0.0.0:*               LISTEN      root       22832      -
+tcp        0      0 0.0.0.0:hostmon         0.0.0.0:*               LISTEN      systemd-resolve 22295      -
+tcp        0      0 asus:55574              par21s11-in-f4.1e:https ESTABLISHED killian    44098      2052/chrome
+tcp        0      0 asus:41988              194.158.119.186:http    TIME_WAIT   root       0          -
+tcp6       0      0 [::]:1716               [::]:*                  LISTEN      killian    24567      1444/kdeconnectd
+tcp6       0      0 ip6-localhost:ipp       [::]:*                  LISTEN      root       22831      -
+tcp6       0      0 [::]:6600               [::]:*                  LISTEN      root       14259      -
+tcp6       0      0 [::]:hostmon            [::]:*                  LISTEN      systemd-resolve 22298      -
+udp        0      0 0.0.0.0:mdns            0.0.0.0:*                           killian    44264      2052/chrome
+udp        0      0 0.0.0.0:mdns            0.0.0.0:*                           killian    45265      2052/chrome
+udp        0      0 0.0.0.0:mdns            0.0.0.0:*                           avahi      23760      -
+udp        0      0 0.0.0.0:hostmon         0.0.0.0:*                           systemd-resolve 22294      -
+udp        0      0 localhost:domain        0.0.0.0:*                           systemd-resolve 21187      -
+udp        0      0 0.0.0.0:bootpc          0.0.0.0:*                           root       26508      -
+udp        0      0 0.0.0.0:35153           0.0.0.0:*                           avahi      23762      -
+udp        0      0 0.0.0.0:ipp             0.0.0.0:*                           root       22944      -
+udp6       0      0 [::]:mdns               [::]:*                              killian    45266      2052/chrome
+udp6       0      0 [::]:mdns               [::]:*                              avahi      23761      -
+udp6       0      0 [::]:hostmon            [::]:*                              systemd-resolve 22297      -
+udp6       0      0 [::]:36116              [::]:*                              avahi      23763      -
+udp6       0      0 [::]:1716               [::]:*                              killian    24566      1444/kdeconnectd
+raw6       0      0 [::]:ipv6-icmp          [::]:*                  7           root       26813      -
+
+
+-> Pour que le serveur n'écoute qu'une seule adresse on peut mettre une condition après Socket s = socketserv.accept()
+   puis à l'aide de cette variable vérifier son adresse, fermer la connecxion si ce n'est pas celle attendu
+   ou laisser la connexion continuer si l'adresse chosie.
