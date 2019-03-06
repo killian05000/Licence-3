@@ -5,4 +5,7 @@
 1.3] -La communication avec Java NIO, ses classes channels et le selector.
      -Les threads qui permette d'attribuer un client par thread et de pallier au problème des fonctions "bloquantes".
 
-2.2] Quand le nombre de clients stressant devient important le serveur renvoit des exceptions : connection reset
+2.2]
+-Quand le nombre de clients stressant devient important le serveur renvoit des exceptions : connection reset
+-Il n'y a pas de différence de comportement du serveur pour les mêmes nombres de connexion entre les clients Stress1 si
+ l'on ferme la connexion immédiatement ou non
