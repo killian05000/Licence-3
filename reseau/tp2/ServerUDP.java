@@ -35,7 +35,7 @@ public class ServerUDP
         String msg = new String(packet.getData(), 0, packet.getLength());
         System.out.print(msg);
 
-        String response = ">reçu"+msg;
+        String response = ">reçu : "+msg;
         byte[] data2 = response.getBytes();
         packet.setData(data2);
         sock.send(packet);
