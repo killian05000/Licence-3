@@ -1,16 +1,19 @@
 import socket
 
-HOST = '127.0.0.1'
-PORT = 1234
+HOST = socket.gethostname()
+PORT = int(input('Port auquel se connecter : '))
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((HOST, PORT))
 
-message='a'
+print('Connexion vers ' + HOST + ':' + str(PORT) + ' reussie.')
+print('\'stop\' pour mettre fin à la connection ')
 
-while message != 'stop':
-    message = input("quelle est le message :")
-    s.send(message)
+message='input'
 
-data = s.recv(1024)
+while message != 'stop\n':
+    message = input()+'\n'
+    data1 = bytes(message, 'utf-8')
+    s.send(data1)
+
 s.close()
-print 'Received', 'data'
+print('Deconnexion')

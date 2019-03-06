@@ -41,12 +41,18 @@ public class ServerTCP
       do
       {
         int len = in.read(data);
-        msg = ">" + new String(data, 0, len);
-        System.out.print(msg);
+        if(len > 0)
+        {
+          msg = ">" + new String(data, 0, len);
+          System.out.print(msg);
+        }
       } while(clientSocket.isConnected());
 
     sock.close();
     clientSocket.close();
+    in.close();
+    out.close();
+
     }
     catch(Exception e)
     {
