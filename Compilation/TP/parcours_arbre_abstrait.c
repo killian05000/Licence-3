@@ -37,7 +37,10 @@ int trace_abs = 1;
 
 void parcours_n_prog(n_prog *n)
 {
-  porte = NULL;
+  portee = P_VARIABLE_GLOBALE;
+  adresseLocaleCourante = 0;
+  adresseArgumentCourant = 0;
+  adresseGlobaleCourante = 0;
   parcours_l_dec(n->variables);
   parcours_l_dec(n->fonctions);
   afficheTabsymboles();
@@ -220,7 +223,7 @@ void parcours_dec(n_dec *n)
 void parcours_foncDec(n_dec *n)
 {
   entreeFonction();
-  ajouteIdentificateur(n->nom, n->portee, n->type, n->adresse, n->complement);
+  ajouteIdentificateur(n->nom, portee, type, adresse, complement);
 
 
   parcours_l_dec(n->u.foncDec_.param);
@@ -234,7 +237,8 @@ void parcours_foncDec(n_dec *n)
 
 void parcours_varDec(n_dec *n)
 {
-  rechercheDeclarative(n->nom);
+  if(rechercheDeclarative(n->nom) == -1)
+    ajouteIdentificateur(n->nom, portee, T_ENTIER, adresse, complement)
 }
 
 /*-------------------------------------------------------------------------*/
