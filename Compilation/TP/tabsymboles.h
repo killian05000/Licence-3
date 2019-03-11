@@ -45,6 +45,6 @@ extern tabsymboles_ tabsymboles;
 int portee;
 int adresseLocaleCourante;
 int adresseArgumentCourant;
-// adresseGlobaleCourante n'est pas utilisée dans tabsymboles.c
+int adresseGlobaleCourante; //n'est pas utilisée dans tabsymboles.c
 // elle peut être locale à votre module de génération de code
 #endif
