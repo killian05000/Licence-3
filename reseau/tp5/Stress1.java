@@ -12,9 +12,9 @@ public class Stress1
 
     try
     {
-      if(args.length != 1 && Integer.parseInt(args[0])>0)
+      if(args.length != 1 || Integer.parseInt(args[0])<=0)
       {
-        System.out.println("Passez en argument le nombre de clients stressants.");
+        System.out.println("Passez en argument le nombre de clients stressants (>0).");
         return;
       }
       else
