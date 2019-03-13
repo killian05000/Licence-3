@@ -14,7 +14,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.lang.Exception;
 
-class EchoServerSPool {
+class EchoServerSPool { 
 
   /* Démarrage et délégation des connexions entrantes */
   public void demarrer(int port) throws Exception {
