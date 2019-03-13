@@ -1,5 +1,6 @@
 *.exe
 *.o
+*.class
 
 Compilation/tp3/analyseur_lexical_flex.c
 
