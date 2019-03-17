@@ -16,7 +16,6 @@ class EchoSelectServer {
   /* Démarrage et délégation des connexions entrantes */
   public void demarrer(int port) {
     ServerSocketChannel serv_socket; // socket d'écoute utilisée par le serveur
-    SocketChannel cli_socket;
 
     System.out.println("Lancement du serveur sur le port " + port);
     try
@@ -43,21 +42,17 @@ class EchoSelectServer {
 
              if(key.isAcceptable())
              {
-
+                SocketChannel client = serv_socket.accept();
+                client.register(selector, SelectionKey.OP_READ);
              }
              if(key.isReadable())
              {
-
+                SocketChannel client = (SocketChannel) key.channel();
              }
              if(key.isWritable())
              {
-
+               SocketChannel client = (SocketChannel) key.channel();
              }
-
-             cli_socket = serv_socket.accept();
-             cli_socket.configureBlocking(false);
-             cli_socket.register(selector, SelectionKey.OP_READ, cli_socket.socket().getPort());
-             Handler ch = new Handler(cli_socket);
           }
          }
       }
