@@ -51,7 +51,8 @@ void parcours_n_prog(n_prog *n)
 
 void parcours_l_instr(n_l_instr *n)
 {
-  if(n){
+  if(n)
+  {
   parcours_instr(n->tete);
   parcours_l_instr(n->queue);
   }
@@ -78,7 +79,8 @@ void parcours_instr_si(n_instr *n)
 {
   parcours_exp(n->u.si_.test);
   parcours_instr(n->u.si_.alors);
-  if(n->u.si_.sinon){
+  if(n->u.si_.sinon)
+  {
     parcours_instr(n->u.si_.sinon);
   }
 }
@@ -105,11 +107,22 @@ void parcours_instr_appel(n_instr *n)
 {
   parcours_appel(n->u.appel);
 }
+
 /*-------------------------------------------------------------------------*/
 
 void parcours_appel(n_appel *n)
 {
-  parcours_l_exp(n->args);
+  if(rechercheExecutable(n->fonction) != -1)
+  {
+    if(n->args == NULL && tabsymboles[rechercheExecutable(n->fonction)].complement == 0)
+      parcours_l_exp(n->args);
+    else if ( tabsymboles[rechercheExecutable(n->fonction)].complement == n->args->size )
+      parcours_l_exp(n->args);
+    else
+      erreur("Fonction lance avec un nombre d'arguments incorrect");
+  }
+  else
+    erreur("fonction non declare");
 }
 
 /*-------------------------------------------------------------------------*/
@@ -155,6 +168,7 @@ void parcours_varExp(n_exp *n)
 }
 
 /*-------------------------------------------------------------------------*/
+
 void parcours_opExp(n_exp *n)
 {
   if( n->u.opExp_.op1 != NULL ) {
@@ -190,7 +204,8 @@ void parcours_appelExp(n_exp *n)
 
 void parcours_l_dec(n_l_dec *n)
 {
-  if( n ){
+  if(n)
+  {
     parcours_dec(n->tete);
     parcours_l_dec(n->queue);
   }
@@ -202,19 +217,29 @@ void parcours_dec(n_dec *n)
 {
   if(n)
   {
+    if(rechercheDeclarative(n->nom) == -1)                                                                    )
     if(n->type == foncDec)
     {
       parcours_foncDec(n);
     }
     else if(n->type == varDec)
     {
-      if(rechercheDeclarative(n->complement) != -1)
+      if(rechercheDeclarative(complement) != -1)
         parcours_varDec(n);
     }
     else if(n->type == tabDec)
     {
       parcours_tabDec(n);
     }
+  }
+  else
+  {
+    if(n->type == foncDec)
+      erreur("fonction deja declare");
+    else if(n->type == varDec)
+      erreur("variable deja declare");
+    else if(n->type == tabDec)
+      erreur("tableau deja declare")
   }
 }
 
@@ -223,30 +248,55 @@ void parcours_dec(n_dec *n)
 void parcours_foncDec(n_dec *n)
 {
   entreeFonction();
-  ajouteIdentificateur(n->nom, portee, type, adresse, complement);
+
+  if (n->u.foncDec_.param == NULL)
+    ajouteIdentificateur(n->nom, portee, T_FONCTION, adresseLocaleCourante, 0);
+  else
+    ajouteIdentificateur(n->nom, portee, T_FONCTION, adresseLocaleCourante, n->u.foncDec_.param->size)
 
 
   parcours_l_dec(n->u.foncDec_.param);
   parcours_l_dec(n->u.foncDec_.variables);
   parcours_instr(n->u.foncDec_.corps);
 
-  sortieFonction(?);
+  sortieFonction(trace_abs);
 }
 
 /*-------------------------------------------------------------------------*/
 
 void parcours_varDec(n_dec *n)
 {
-  if(rechercheDeclarative(n->nom) == -1)
-    ajouteIdentificateur(n->nom, portee, T_ENTIER, adresse, complement)
+  if (portee == P_ARGUMENT)
+  {
+    ajouteIdentificateur(n->nom, portee, T_ENTIER, adresseArgumentCourant, 0);
+    adresseArgumentCourant+=4;
+  }
+  else if (portee == P_VARIABLE_LOCALE)
+  {
+    ajouteIdentificateur(n->nom, portee, T_ENTIER, adresseLocaleCourante, 0);
+    adresseLocaleCourante+=4;
+  }
+  else if (portee == P_VARIABLE_GLOBALE)
+  {
+    ajouteIdentificateur(n->nom, portee, T_ENTIER, adresseGlobaleCourante, 0);
+    adresseGlobaleCourante+=4;
+  }
 }
 
 /*-------------------------------------------------------------------------*/
 
 void parcours_tabDec(n_dec *n)
 {
-  char texte[100]; // Max. 100 chars nom tab + taille
-  sprintf(texte, "%s[%d]", n->nom, n->u.tabDec_.taille);
+  if(portee == P_VARIABLE_GLOBALE)
+  {
+    ajouteIdentificateur(n->nom, portee, T_TABLEAU_ENTIER, adresseGlobaleCourante, n->u.tabDec_.taille);
+    adresseGlobaleCourante+=(4*n->u.tabDec_.taille);
+  }
+  else
+    erreur("Un tableau ne peut être déclaré que comme une variable locale");
+
+  //char texte[100]; // Max. 100 chars nom tab + taille
+  //sprintf(texte, "%s[%d]", n->nom, n->u.tabDec_.taille);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -254,23 +304,27 @@ void parcours_tabDec(n_dec *n)
 void parcours_var(n_var *n)
 {
   if(n->type == simple) {
-    ajouteIdentificateur(n->name, n->portee, n->type, n->adresse, n->complement);
+    ajouteIdentificateur(n->name, portee, type, adresse, complement);
     parcours_var_simple(n);
   }
   else if(n->type == indicee) {
-    ajouteIdentificateur(n->name, n->portee, n->type, n->adresse, n->complement);
+    ajouteIdentificateur(n->name, portee, type, adresse, complement);
     parcours_var_indicee(n);
   }
 }
 
 /*-------------------------------------------------------------------------*/
+
 void parcours_var_simple(n_var *n)
 {
+  
 }
 
 /*-------------------------------------------------------------------------*/
+
 void parcours_var_indicee(n_var *n)
 {
   parcours_exp( n->u.indicee_.indice );
 }
+
 /*-------------------------------------------------------------------------*/
