@@ -1,38 +1,50 @@
 import java.net.Socket;
 import java.net.InetAddress;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
+import java.net.*;
 
 public class Stress1
 {
   public static void main(String[] args)
   {
     int nbCS=0;
-    Socket sc;
-    PrintWriter out;
+    SocketChannel sc;
+    ByteBuffer buffer;
+    int port=2222;
 
     try
     {
-      if(args.length != 1 || Integer.parseInt(args[0])<=0)
+      if(args.length != 2 || Integer.parseInt(args[0])<=0)
       {
-        System.out.println("Passez en argument le nombre de clients stressants (>0).");
+        System.out.println("Passez en argument le port et le nombre de clients stressants (>0).");
         return;
       }
       else
       {
-        nbCS = Integer.parseInt(args[0]);
+        nbCS = Integer.parseInt(args[1]);
+        port = Integer.parseInt(args[0]);
         System.out.println("Il y a "+nbCS+" clients stressants");
       }
 
       for(int i=1; i<nbCS+1; i++)
       {
-        sc = new Socket(InetAddress.getByName("localhost"), 2222);
-        out = new PrintWriter(sc.getOutputStream());
-        String msg;
+        double temps = System.nanoTime();
 
-        msg = "client stress1 n°"+i;
-        out.println(msg);
-        out.flush();
-        //sc.close();
+        sc = SocketChannel.open();
+        sc.connect(new InetSocketAddress("localhost", port));
+
+        buffer = ByteBuffer.allocate(40);
+        buffer.clear();
+        String text = "client stress1 n°"+i;
+        buffer.put(text.getBytes());
+        buffer.flip();
+
+        while(buffer.hasRemaining())
+        {
+          sc.write(buffer);
+        }
       }
     }catch(Exception e)
     {

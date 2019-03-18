@@ -1,1 +1,2 @@
 Lancement du serveur sur le port 1234
+Arrêt anormal du serveur.java.net.BindException: Adresse déjà utilisée (Bind failed)

@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.Iterator;
 import java.nio.ByteBuffer;
 
-class EchoSelectServer {
+class EchoServerWSPool {
 
   /* Démarrage et délégation des connexions entrantes */
   public void demarrer(int port) {
@@ -73,14 +73,14 @@ class EchoSelectServer {
 
   public static void main(String[] args) {
     int argc = args.length;
-    EchoSelectServer serveur;
+    EchoServerWSPool serveur;
 
     /* Traitement des arguments */
     if (argc == 1)
     {
       try
       {
-        serveur = new EchoSelectServer();
+        serveur = new EchoServerWSPool();
         serveur.demarrer(Integer.parseInt(args[0]));
       } catch (Exception e)
       {
