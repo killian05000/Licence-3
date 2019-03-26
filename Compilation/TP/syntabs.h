@@ -1,7 +1,7 @@
 #ifndef __SYNTABS__
 #define __SYNTABS__
 
-/* Abbréviations: 
+/* Abbréviations:
   * n -> noeud
   * l -> liste
   * dec -> déclaration
@@ -41,7 +41,7 @@ n_prog *cree_n_prog(n_l_dec *variables, n_l_dec *fonctions);
 
 /* Déclaration de fonction, variable simple ou variable tableau */
 struct n_dec_ {
-  enum {foncDec, varDec, tabDec} type; 
+  enum {foncDec, varDec, tabDec} type;
   char *nom;
   union {
     struct{n_l_dec *param; n_l_dec *variables; n_instr *corps;} foncDec_;
@@ -61,9 +61,9 @@ n_dec *cree_n_dec_fonc(char *nom, n_l_dec *param, n_l_dec *variables, n_instr *c
 
 /* ATTENTION : non => négation logique
    Le opérateurs unaires ont op2 = NULL par convention */
-typedef enum {plus, moins, fois, divise, egal, inferieur, ou, et, non} operation; 
+typedef enum {plus, moins, fois, divise, egal, inferieur, ou, et, non} operation;
 
-/* Expression arithmétique ou logique (opExp) ou atomique (varExp, intExp, 
+/* Expression arithmétique ou logique (opExp) ou atomique (varExp, intExp,
    appelExp, lireExp) */
 struct n_exp_ {
   enum{varExp, opExp, intExp, appelExp, lireExp} type;
@@ -75,29 +75,29 @@ struct n_exp_ {
   }u;
 };
 
-/* Crée un noeud de type expression arithmétique ou logique binaire - op2=NULL 
+/* Crée un noeud de type expression arithmétique ou logique binaire - op2=NULL
    pour opération unaire - négation */
 n_exp *cree_n_exp_op(operation type, n_exp *op1, n_exp *op2);
 /* Crée un noeud de type expression atomique - un nombre entier */
 n_exp *cree_n_exp_entier(int entier);
-/* Crée un noeud de type expression atomique - un accès à une variable (simple 
+/* Crée un noeud de type expression atomique - un accès à une variable (simple
 ou indicée) */
 n_exp *cree_n_exp_var(n_var *var);
 /* Crée un noeud de type expression atomique - un appel de fonction */
 n_exp *cree_n_exp_appel(n_appel *app);
-/* Crée un noeud de type expression atomique - un appel à la fonction spéciale 
+/* Crée un noeud de type expression atomique - un appel à la fonction spéciale
 lire */
 n_exp *cree_n_exp_lire(void);
 
 /*-------------------------------------------------------------------------*/
 
-/* Instruction, peut être de plusieurs types et avoir plusieurs fils, selon le 
+/* Instruction, peut être de plusieurs types et avoir plusieurs fils, selon le
    type */
 struct n_instr_ {
-  enum {affecteInst, siInst, tantqueInst, appelInst, retourInst, ecrireInst, 
+  enum {affecteInst, siInst, tantqueInst, appelInst, retourInst, ecrireInst,
         videInst, blocInst } type;
   union{
-    struct{n_var *var; n_exp *exp;} affecte_;    
+    struct{n_var *var; n_exp *exp;} affecte_;
     struct{n_exp *test; struct n_instr_ *alors; struct n_instr_ *sinon;} si_;
     struct{n_exp *test; struct n_instr_ *faire;} tantque_;
     n_appel *appel;
@@ -107,7 +107,7 @@ struct n_instr_ {
   }u;
 };
 
-/* Crée un noeud de type instruction "si". Si il n'y a pas de "sinon", passer 
+/* Crée un noeud de type instruction "si". Si il n'y a pas de "sinon", passer
    sinon=NULL */
 n_instr *cree_n_instr_si(n_exp *test, n_instr *alors, n_instr *sinon);
 /* Crée un noeud de type instruction contenant un bloc d'instructions  */
@@ -127,11 +127,11 @@ n_instr *cree_n_instr_vide(void);
 
 /*-------------------------------------------------------------------------*/
 struct n_appel_{
-  char *fonction; 
+  char *fonction;
   n_l_exp *args; /* Liste d'expressions passées en parmètre */
 };
 
-/* Crée un noeud de type appel de fonction - peu importe si instruction ou 
+/* Crée un noeud de type appel de fonction - peu importe si instruction ou
    expression */
 n_appel *cree_n_appel(char *fonction, n_l_exp *args);
 
@@ -145,10 +145,10 @@ struct n_var_ {
   }u;
 };
 
-/* Crée un noeud de type accès à une variable simple (dans une expression ou à 
+/* Crée un noeud de type accès à une variable simple (dans une expression ou à
    gauche d'une affectation) */
 n_var *cree_n_var_simple(char *nom);
-/* Crée un noeud de type accès à une variable indicée - accès à une case de 
+/* Crée un noeud de type accès à une variable indicée - accès à une case de
    tableau (dans une expression ou à gauche d'une affectation) */
 n_var *cree_n_var_indicee(char *nom, n_exp *indice);
 
@@ -157,6 +157,7 @@ n_var *cree_n_var_indicee(char *nom, n_exp *indice);
 struct n_l_exp_ {
   n_exp *tete;
   struct n_l_exp_ *queue;
+  int size; // ajout perso
 };
 
 /* Crée un noeud de type liste d'expressions (dans un appel de fonction). Pour
@@ -170,7 +171,7 @@ struct n_l_instr_ {
   struct n_l_instr_ *queue;
 };
 
-/* Crée un noeud de type liste d'instructions. Pour marquer la fin de la liste, 
+/* Crée un noeud de type liste d'instructions. Pour marquer la fin de la liste,
    passer queue=NULL */
 n_l_instr *cree_n_l_instr(n_instr *tete, n_l_instr *queue);
 
@@ -179,9 +180,10 @@ n_l_instr *cree_n_l_instr(n_instr *tete, n_l_instr *queue);
 struct n_l_dec_{
   n_dec *tete;
   struct n_l_dec_ *queue;
+  int size;
 };
 
-/* Crée un noeud de type liste de déclarations. Pour marquer la fin de la liste, 
+/* Crée un noeud de type liste de déclarations. Pour marquer la fin de la liste,
    passer queue=NULL */
 n_l_dec *cree_n_l_dec(n_dec *tete, n_l_dec *queue);
 /*-------------------------------------------------------------------------*/

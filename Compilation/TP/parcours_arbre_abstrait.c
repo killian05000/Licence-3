@@ -30,7 +30,7 @@ void parcours_var_simple(n_var *n);
 void parcours_var_indicee(n_var *n);
 void parcours_appel(n_appel *n);
 
-int trace_abs = 1;
+int trace_abs2 = 1;
 
 
 /*-------------------------------------------------------------------------*/
@@ -114,15 +114,15 @@ void parcours_appel(n_appel *n)
 {
   if(rechercheExecutable(n->fonction) != -1)
   {
-    if(n->args == NULL && tabsymboles[rechercheExecutable(n->fonction)].complement == 0)
+    if(n->args == NULL && tabsymboles.tab[rechercheExecutable(n->fonction)].complement == 0)
       parcours_l_exp(n->args);
-    else if ( tabsymboles[rechercheExecutable(n->fonction)].complement == n->args->size )
+    else if ( tabsymboles.tab[rechercheExecutable(n->fonction)].complement == n->args->size )
       parcours_l_exp(n->args);
     else
       erreur("Fonction lance avec un nombre d'arguments incorrect");
   }
-  else
-    erreur("fonction non declare");
+  //else
+    //erreur("fonction non declare");
 }
 
 /*-------------------------------------------------------------------------*/
@@ -215,17 +215,15 @@ void parcours_l_dec(n_l_dec *n)
 
 void parcours_dec(n_dec *n)
 {
-  if(n)
+  if(rechercheDeclarative(n->nom) == -1)
   {
-    if(rechercheDeclarative(n->nom) == -1)                                                                    )
     if(n->type == foncDec)
     {
       parcours_foncDec(n);
     }
     else if(n->type == varDec)
     {
-      if(rechercheDeclarative(complement) != -1)
-        parcours_varDec(n);
+      parcours_varDec(n);
     }
     else if(n->type == tabDec)
     {
@@ -239,7 +237,7 @@ void parcours_dec(n_dec *n)
     else if(n->type == varDec)
       erreur("variable deja declare");
     else if(n->type == tabDec)
-      erreur("tableau deja declare")
+      erreur("tableau deja declare");
   }
 }
 
@@ -247,19 +245,16 @@ void parcours_dec(n_dec *n)
 
 void parcours_foncDec(n_dec *n)
 {
+  ajouteIdentificateur(n->nom, portee, T_FONCTION, 0, 0);
+
+  while(n->u.foncDec_.param->queue != NULL)
+    tabsymboles.tab[rechercheExecutable(n->fonction)].complement++;
+
   entreeFonction();
-
-  if (n->u.foncDec_.param == NULL)
-    ajouteIdentificateur(n->nom, portee, T_FONCTION, adresseLocaleCourante, 0);
-  else
-    ajouteIdentificateur(n->nom, portee, T_FONCTION, adresseLocaleCourante, n->u.foncDec_.param->size)
-
-
   parcours_l_dec(n->u.foncDec_.param);
   parcours_l_dec(n->u.foncDec_.variables);
   parcours_instr(n->u.foncDec_.corps);
-
-  sortieFonction(trace_abs);
+  sortieFonction(trace_abs2);
 }
 
 /*-------------------------------------------------------------------------*/
@@ -293,7 +288,7 @@ void parcours_tabDec(n_dec *n)
     adresseGlobaleCourante+=(4*n->u.tabDec_.taille);
   }
   else
-    erreur("Un tableau ne peut être déclaré que comme une variable locale");
+    erreur("Un tableau ne peut être déclaré que comme une variable globale");
 
   //char texte[100]; // Max. 100 chars nom tab + taille
   //sprintf(texte, "%s[%d]", n->nom, n->u.tabDec_.taille);
@@ -303,6 +298,30 @@ void parcours_tabDec(n_dec *n)
 
 void parcours_var(n_var *n)
 {
+
+  if(rechercheExecutable(n->nom)!=-1)
+  {
+    if(n->type == simple)
+    {
+      if(tabsymboles.tab[rechercheExecutable(n->nom)].type != T_ENTIER)
+        erreur("Usage incorrect de la variable [erreur de typage]");
+      else
+        parcours_var_simple(n);
+
+    }else if(n->type == indicee)
+    {
+      if(tabsymboles.tab[rechercheExecutable(n->nom)].type != T_TABLEAU_ENTIER)
+        erreur("Usage iccorect de la variable tableau [erreur de typage]");
+      else
+        parcours_var_indicee(n);
+    }
+    else
+    {
+      erreur("type inconnu");
+    }
+  }
+  else
+    erreur("Variable non déclarer");/*
   if(n->type == simple) {
     ajouteIdentificateur(n->name, portee, type, adresse, complement);
     parcours_var_simple(n);
@@ -310,14 +329,14 @@ void parcours_var(n_var *n)
   else if(n->type == indicee) {
     ajouteIdentificateur(n->name, portee, type, adresse, complement);
     parcours_var_indicee(n);
-  }
+  }*/
 }
 
 /*-------------------------------------------------------------------------*/
 
 void parcours_var_simple(n_var *n)
 {
-  
+
 }
 
 /*-------------------------------------------------------------------------*/
