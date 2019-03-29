@@ -19,5 +19,4 @@ entier $v_1, entier $v_2;
     {
         ecrire( $v_2 );
     }
-
 }

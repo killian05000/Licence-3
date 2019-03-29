@@ -180,7 +180,6 @@ n_l_instr *cree_n_l_instr(n_instr *tete, n_l_instr *queue);
 struct n_l_dec_{
   n_dec *tete;
   struct n_l_dec_ *queue;
-  int size;
 };
 
 /* Crée un noeud de type liste de déclarations. Pour marquer la fin de la liste,

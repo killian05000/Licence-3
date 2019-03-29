@@ -20,7 +20,7 @@ void parcours_opExp(n_exp *n);
 void parcours_intExp(n_exp *n);
 void parcours_lireExp(n_exp *n);
 void parcours_appelExp(n_exp *n);
-void parcours_l_dec(n_l_dec *n);
+int parcours_l_dec(n_l_dec *n);
 void parcours_dec(n_dec *n);
 void parcours_foncDec(n_dec *n);
 void parcours_varDec(n_dec *n);
@@ -43,7 +43,7 @@ void parcours_n_prog(n_prog *n)
   adresseGlobaleCourante = 0;
   parcours_l_dec(n->variables);
   parcours_l_dec(n->fonctions);
-  afficheTabsymboles();
+  //afficheTabsymboles();
 }
 
 /*-------------------------------------------------------------------------*/
@@ -118,8 +118,8 @@ void parcours_appel(n_appel *n)
       parcours_l_exp(n->args);
     else if ( tabsymboles.tab[rechercheExecutable(n->fonction)].complement == n->args->size )
       parcours_l_exp(n->args);
-    else
-      erreur("Fonction lance avec un nombre d'arguments incorrect");
+    /*else
+      erreur("Fonction lance avec un nombre d'arguments incorrect");*/
   }
   //else
     //erreur("fonction non declare");
@@ -202,20 +202,28 @@ void parcours_appelExp(n_exp *n)
 
 /*-------------------------------------------------------------------------*/
 
-void parcours_l_dec(n_l_dec *n)
+int parcours_l_dec(n_l_dec *n)
 {
   if(n)
   {
     parcours_dec(n->tete);
-    parcours_l_dec(n->queue);
+    int nbArgs = parcours_l_dec(n->queue);
+    return nbArgs+1;
   }
+  return 0;
 }
 
 /*-------------------------------------------------------------------------*/
 
 void parcours_dec(n_dec *n)
 {
-  if(rechercheDeclarative(n->nom) == -1)
+  if(rechercheDeclarative(n->nom) != -1)
+    erreur("variable deja declaré localement");
+
+  if(rechercheExecutable(n->nom) != -1)
+    erreur("variable deja declaré globalement");
+
+  if(n)
   {
     if(n->type == foncDec)
     {
@@ -230,28 +238,19 @@ void parcours_dec(n_dec *n)
       parcours_tabDec(n);
     }
   }
-  else
-  {
-    if(n->type == foncDec)
-      erreur("fonction deja declare");
-    else if(n->type == varDec)
-      erreur("variable deja declare");
-    else if(n->type == tabDec)
-      erreur("tableau deja declare");
-  }
 }
 
 /*-------------------------------------------------------------------------*/
 
 void parcours_foncDec(n_dec *n)
 {
-  ajouteIdentificateur(n->nom, portee, T_FONCTION, 0, 0);
-
-  while(n->u.foncDec_.param->queue != NULL)
-    tabsymboles.tab[rechercheExecutable(n->fonction)].complement++;
+  int lignF = ajouteIdentificateur(n->nom, portee, T_FONCTION, 0, 0);
 
   entreeFonction();
-  parcours_l_dec(n->u.foncDec_.param);
+  int nbArgs = parcours_l_dec( n->u.foncDec_.param);
+  tabsymboles.tab[lignF].complement = nbArgs;
+  portee = P_VARIABLE_LOCALE;
+
   parcours_l_dec(n->u.foncDec_.variables);
   parcours_instr(n->u.foncDec_.corps);
   sortieFonction(trace_abs2);
@@ -263,17 +262,17 @@ void parcours_varDec(n_dec *n)
 {
   if (portee == P_ARGUMENT)
   {
-    ajouteIdentificateur(n->nom, portee, T_ENTIER, adresseArgumentCourant, 0);
+    ajouteIdentificateur(n->nom, portee, T_ENTIER, adresseArgumentCourant, 1);
     adresseArgumentCourant+=4;
   }
   else if (portee == P_VARIABLE_LOCALE)
   {
-    ajouteIdentificateur(n->nom, portee, T_ENTIER, adresseLocaleCourante, 0);
+    ajouteIdentificateur(n->nom, portee, T_ENTIER, adresseLocaleCourante, 1);
     adresseLocaleCourante+=4;
   }
   else if (portee == P_VARIABLE_GLOBALE)
   {
-    ajouteIdentificateur(n->nom, portee, T_ENTIER, adresseGlobaleCourante, 0);
+    ajouteIdentificateur(n->nom, portee, T_ENTIER, adresseGlobaleCourante, 1);
     adresseGlobaleCourante+=4;
   }
 }
@@ -298,7 +297,6 @@ void parcours_tabDec(n_dec *n)
 
 void parcours_var(n_var *n)
 {
-
   if(rechercheExecutable(n->nom)!=-1)
   {
     if(n->type == simple)
@@ -311,7 +309,7 @@ void parcours_var(n_var *n)
     }else if(n->type == indicee)
     {
       if(tabsymboles.tab[rechercheExecutable(n->nom)].type != T_TABLEAU_ENTIER)
-        erreur("Usage iccorect de la variable tableau [erreur de typage]");
+        erreur("Usage incorrect de la variable tableau [erreur de typage]");
       else
         parcours_var_indicee(n);
     }
@@ -320,7 +318,7 @@ void parcours_var(n_var *n)
       erreur("type inconnu");
     }
   }
-  else
+  /*else
     erreur("Variable non déclarer");/*
   if(n->type == simple) {
     ajouteIdentificateur(n->name, portee, type, adresse, complement);
