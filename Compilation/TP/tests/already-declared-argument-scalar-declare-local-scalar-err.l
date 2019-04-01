@@ -1,5 +1,7 @@
+foo(entier $a)
 entier $a;
+{
+}
 main()
 {
-$a = 123;
 }
