@@ -157,7 +157,6 @@ n_var *cree_n_var_indicee(char *nom, n_exp *indice);
 struct n_l_exp_ {
   n_exp *tete;
   struct n_l_exp_ *queue;
-  int size; // ajout perso
 };
 
 /* Crée un noeud de type liste d'expressions (dans un appel de fonction). Pour
