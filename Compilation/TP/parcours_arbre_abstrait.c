@@ -116,7 +116,7 @@ void parcours_appel(n_appel *n)
   {
     if(n->args == NULL && tabsymboles.tab[rechercheExecutable(n->fonction)].complement == 0)
       parcours_l_exp(n->args);
-    else if ( tabsymboles.tab[rechercheExecutable(n->fonction)].complement == n->args->size )
+    else if ( tabsymboles.tab[rechercheExecutable(n->fonction)].complement == parcours_n_l_exp(n))
       parcours_l_exp(n->args);
     /*else
       erreur("Fonction lance avec un nombre d'arguments incorrect");*/
@@ -215,13 +215,40 @@ int parcours_l_dec(n_l_dec *n)
 
 /*-------------------------------------------------------------------------*/
 
+int parcours_n_l_exp(n_l_exp *n)
+{
+  if(n)
+  {
+    parcours_exp(n->tete);
+    int nbArgs = parcours_n_l_exp(n->queue);
+    return nbArgs+1;
+  }
+  return 0;
+}
+
+/*-------------------------------------------------------------------------*/
+
 void parcours_dec(n_dec *n)
 {
   if(rechercheDeclarative(n->nom) != -1)
-    erreur("variable deja declaré localement");
+  {
+    if(n->type==foncDec)
+      erreur("fonction deja declaré localement");
+    else if(n->type==varDec)
+      erreur("variable deja declare localement");
+    else if(n->type==tabDec)
+      erreur("tableau deja declare localement");
+  }
 
   if(rechercheExecutable(n->nom) != -1)
-    erreur("variable deja declaré globalement");
+  {
+    if(n->type==foncDec)
+      erreur("fonction deja declaré globalement");
+    else if(n->type==varDec)
+      erreur("variable deja declare globalement");
+    else if(n->type==tabDec)
+      erreur("tableau deja declare globalement");
+  }
 
   if(n)
   {
@@ -319,7 +346,7 @@ void parcours_var(n_var *n)
     }
   }
   /*else
-    erreur("Variable non déclarer");/*
+    erreur("Variable non déclarer");
   if(n->type == simple) {
     ajouteIdentificateur(n->name, portee, type, adresse, complement);
     parcours_var_simple(n);
