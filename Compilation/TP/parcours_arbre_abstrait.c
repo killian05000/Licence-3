@@ -45,6 +45,8 @@ void parcours_n_prog(n_prog *n)
   parcours_l_dec(n->variables);
   parcours_l_dec(n->fonctions);
   //afficheTabsymboles();
+  if(rechercheExecutable("main") == -1)
+    erreur("pas de main");
 }
 
 /*-------------------------------------------------------------------------*/
@@ -372,7 +374,10 @@ void parcours_var(n_var *n)
 
 void parcours_var_simple(n_var *n)
 {
+  int nbLigne = rechercheExecutable(n->nom);
 
+  if(tabsymboles.tab[nbLigne].type != T_ENTIER)
+    erreur("La variable n'est pas un entier");
 }
 
 /*-------------------------------------------------------------------------*/
@@ -380,6 +385,11 @@ void parcours_var_simple(n_var *n)
 void parcours_var_indicee(n_var *n)
 {
   parcours_exp( n->u.indicee_.indice );
+
+  int nbLigne = rechercheExecutable(n->nom);
+
+  if(tabsymboles.tab[nbLigne].type != T_TABLEAU_ENTIER)
+    erreur("La variable n'est pas un tableau");
 }
 
 /*-------------------------------------------------------------------------*/
