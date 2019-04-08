@@ -13,6 +13,7 @@ void parcours_instr_affect(n_instr *n);
 void parcours_instr_appel(n_instr *n);
 void parcours_instr_retour(n_instr *n);
 void parcours_instr_ecrire(n_instr *n);
+void parcours_instr_pour(n_instr *n); //POUR
 void parcours_l_exp(n_l_exp *n);
 void parcours_exp(n_exp *n);
 void parcours_varExp(n_exp *n);
@@ -137,6 +138,16 @@ void parcours_instr_retour(n_instr *n)
 void parcours_instr_ecrire(n_instr *n)
 {
   parcours_exp(n->u.ecrire_.expression);
+}
+
+/*-------------------------------------------------------------------------*/
+
+void parcours_instr_pour(n_instr *n)
+{
+  parcours_instr(n->u.pour_.affect);
+  parcours_exp(n->u.pour_.exp);
+  parcours_instr(n->u.pour_.affect2);
+  parcours_instr(n->u.pour_.faire);
 }
 
 /*-------------------------------------------------------------------------*/

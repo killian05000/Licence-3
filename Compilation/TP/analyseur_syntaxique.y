@@ -68,6 +68,7 @@ int yyerror(char *s); // declare ci-dessous
 //loop
 %token TANTQUE
 %token FAIRE
+%token POUR
 
 //function
 %token LIRE
@@ -87,7 +88,7 @@ int yyerror(char *s); // declare ci-dessous
 %type <l_dec> listeDecVar
 %type <l_dec> ligneDecVar
 
-%type <instr> instru_affect condition instru_boucle instru_retour appelFonction instru_bloc
+%type <instr> instru_affect condition instru_boucle instru_retour appelFonction instru_bloc instru_pour
 
 %type <appel> fonction
 
@@ -199,6 +200,7 @@ instruction : instru_affect		{$$ = $1;}
 |	            instru_retour		{$$ = $1;}
 |	            appelFonction		{$$ = $1;}
 |	            instru_bloc 	  {$$ = $1;}
+|             instru_pour     {$$ = $1;} /* Rajout POUR */
 |	            POINT_VIRGULE		{$$ = cree_n_instr_vide();}
 ;
 
@@ -210,13 +212,15 @@ condition : SI expression ALORS instru_bloc	                    {$$ = cree_n_ins
 
 instru_boucle : TANTQUE expression FAIRE instru_bloc 	  {$$ = cree_n_instr_tantque($2, $4);};
 
-instru_retour : RETOUR expression POINT_VIRGULE   {$$ = cree_n_instr_retour($2);};
+instru_retour : RETOUR expression POINT_VIRGULE   {$$ = cree_n_instr_retour($2);}
 
 appelFonction : fonction POINT_VIRGULE		                                                {$$ = cree_n_instr_appel($1);}
 |             	ECRIRE PARENTHESE_OUVRANTE expression PARENTHESE_FERMANTE POINT_VIRGULE		{$$ = cree_n_instr_ecrire($3);}
 ;
 
-instru_bloc : ACCOLADE_OUVRANTE ensembleInstructions ACCOLADE_FERMANTE 	{$$ = cree_n_instr_bloc($2);};
+instru_bloc : ACCOLADE_OUVRANTE ensembleInstructions ACCOLADE_FERMANTE 	{$$ = cree_n_instr_bloc($2);}
+
+instru_pour : POUR instru_affect expression POINT_VIRGULE instru_affect FAIRE instru_bloc {$$ = cree_n_instr_pour($2, $3, $5, $7);} /* Rajout POUR */
 
 ensembleInstructions : instruction ensembleInstructions		{$$ = cree_n_l_instr($1, $2);}
 |													                                {$$=NULL;}

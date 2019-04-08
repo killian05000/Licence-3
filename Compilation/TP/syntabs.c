@@ -196,3 +196,13 @@ n_l_dec *cree_n_l_dec(n_dec *tete, n_l_dec *queue)
   return n;
 }
 
+n_instr *cree_n_instr_pour(n_instr *affect, n_exp *exp, n_instr *affect2, n_instr *faire) // Rajout POUR
+{
+  n_instr *n = malloc(sizeof(n_instr));
+  n->type = pourInst;
+  n->u.pour_.affect = affect;
+  n->u.pour_.exp = exp;
+  n->u.pour_.affect2 = affect2;
+  n->u.pour_.faire = faire;
+  return n;
+}
