@@ -14,3 +14,7 @@ et lancer différentes opérations :
 Y est également un paramètre, correspondant au fichier
 ou au chemin du fichier sur lequel vous voulez lancer le
 compilateur.
+
+Pour netoyer le dossier et suprimer les fichiers générés
+par la commande make, utilisez la commande suivante :
+$ make clean
